@@ -1,0 +1,472 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Відкриті дані земельного кадастру України</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css' rel='stylesheet' />
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+
+    <style>
+        #mapid { height: 100%; width: 100%; position: absolute; top: 0}
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu {
+            background: #fff;
+            position: absolute;
+            z-index: 1;
+            border-radius: 3px;
+            border: 1px solid rgba(0, 0, 0, 0.4);
+            font-family: 'Open Sans', sans-serif;
+            bottom: 100%;
+        }
+        
+
+        @media (min-width:600px)  {
+            .menu a {
+                font-size: 13px;
+                padding: 0;
+                padding: 5px;
+            }
+            #export a {
+                font-size: 13px;
+                padding: 0;
+                padding: 10px;
+            }
+        }
+        @media (max-width:600px)  {
+            .menu a {
+                font-size: 13px;
+                padding: 0;
+                padding: 5px;
+            }
+            #export a {
+                font-size: 13px;
+                padding: 0;
+                padding: 20px;
+            }
+        }
+
+        #export {
+            background: #fff;
+            position: absolute;
+            z-index: 1;
+            bottom: 30px;
+            right: 10px;
+            border-radius: 3px;
+            border: 1px solid rgba(0, 0, 0, 0.4);
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .menu a {
+            color: #404040;
+            display: block;
+            margin: 0;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+            text-align: left;
+        }
+
+        #export a {
+            color: #404040;
+            display: block;
+            margin: 0;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+            text-align: left;
+        }
+
+        .menu a:last-child {
+            border: none;
+        }
+
+        .menu a:hover {
+            background-color: #f8f8f8;
+            color: #404040;
+        }
+
+        .menu a.active {
+            background-color: #3887be;
+            color: #ffffff;
+        }
+
+        .menu a.active:hover {
+            background: #3074a4;
+        }
+
+        img {
+              height: auto;
+              max-width: 2.5rem;
+              margin-right: 1rem;
+            }
+
+            .d-center {
+              display: flex;
+              align-items: center;
+            }
+
+            .selected img {
+              width: auto;
+              max-height: 23px;
+              margin-right: 0.5rem;
+            }
+
+            .v-select .dropdown li {
+              border-bottom: 1px solid rgba(112, 128, 144, 0.1);
+            }
+
+            .v-select .dropdown li:last-child {
+              border-bottom: none;
+            }
+
+            .v-select .dropdown li a {
+              padding: 10px 20px;
+              width: 100%;
+              font-size: 1.25em;
+              color: #3c3c3c;
+            }
+
+            .v-select .dropdown-menu .active > a {
+              color: #fff;
+            }
+
+        #search {
+            width: calc(100% - 50px);
+            max-width: 800px;
+        }
+
+
+    </style>
+
+    <!-- use the latest vue-select release -->
+    <script src="https://unpkg.com/vue-select@latest"></script>
+    <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css">
+
+    <script src="{% static "mapbox-gl-layers.js" %}"></script>
+    <link rel="stylesheet" href="{% static "mapbox-gl-layers.css" %}">
+</head>
+<body>
+
+    <div id="search" style="width: 50%; z-index: 999999;">
+        <v-select style="z-index: 99999; background-color: white;" placeholder="Почніть вводити адресу" label="id" :filterable="false" :options="options" @search="onSearch" @input="onChange($event)">
+        <template slot="no-options">
+          Почніть вводити адресу
+        </template>
+        <template slot="option" slot-scope="option">
+          <div class="d-center">
+              <% option.address %>
+            </div>
+        </template>
+        <template slot="selected-option" slot-scope="option">
+          <div class="selected d-center">
+            <% option.address %>
+          </div>
+        </template>
+      </v-select>
+    </div>
+
+<div id="mapid"></div>
+    <style>
+        .filter_row {
+            background: #fff;
+            position: absolute;
+            z-index: 1;
+            bottom: 10px;
+            left: 10px;
+            border-radius: 3px;
+            border: 1px solid rgba(0, 0, 0, 0.4);
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .filter_row .filter_column {
+            height: 30px;
+            display: inline-block;
+            padding: 5px 10px;
+            line-height: 30px;
+            cursor: pointer;
+        }
+
+        .toggler {
+            user-select: none;
+        }
+    </style>
+<div class="filter_row">
+    <div class="filter_column address_filter toggler" data-toggle="menu">
+        Адреси
+        <div id="menu" class="menu toggled_menu" style="display: none; margin-left: -10px;"></div>
+    </div>
+    <div class="filter_column category_filter toggler" data-toggle="category_menu">
+        Категорії
+        <div id="category_menu" class="menu toggled_menu" style="display: none; width: 300px; margin-left: -10px;"></div>
+    </div>
+</div>
+<script>
+    document.querySelectorAll('div.toggler').forEach(item => {
+        if(!item.getAttribute('data-toggle')) {
+            return;
+        }
+        item.addEventListener('click', event => {
+            console.log('Toggling', event.target, event.target.getAttribute('data-toggle'));
+            const x = document.getElementById(event.target.getAttribute('data-toggle'));
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        })
+    });
+
+    function closeAllMenus() {
+        console.log('Closing all menus');
+        document.querySelectorAll('.toggled_menu').forEach(item => {
+            item.style.display = "none";
+        });
+    }
+    document.getElementById('mapid').addEventListener('mousedown', event => {
+        closeAllMenus();
+    });
+</script>
+<div id="export">
+    <a style="cursor: pointer;" onclick="export_geojson();">Export | Експорт</a>
+</div>
+
+
+
+<script>
+
+    function enter_point (e) {
+        // Change the cursor style as a UI indicator.
+        map.getCanvas().style.cursor = 'pointer';
+
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var description = 'Номер: ' + e.features[0].properties.cadnum;
+        if (e.features[0].properties.address) {
+            description += '<br>Адреса: ' + e.features[0].properties.address;
+        }
+        if (e.features[0].properties.purpose_code) {
+            description += '<br>Призначення: ' + e.features[0].properties.purpose_code;
+        }
+        if (e.features[0].properties.category) {
+            description += '<br>Категорія: ' + e.features[0].properties.category;
+        }
+
+        // Ensure that if the map is zoomed out such that multiple
+        // copies of the feature are visible, the popup appears
+        // over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        // Populate the popup and set its coordinates
+        // based on the feature found.
+        popup.setLngLat(coordinates).setHTML(description).addTo(map);
+    }
+
+    function leave_point () {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+    }
+    function click_point (e) {
+       window.location.href = '/parcel/' + e.features[0].properties.cadnum;
+    }
+
+    function export_geojson() {
+        console.log(map.getBounds());
+        const bounds = map.getBounds();
+        const url = '/export/' + bounds._sw.lat + '/' + bounds._sw.lng + '/' + bounds._ne.lat + '/' + bounds._ne.lng + '/'
+        window.location.href = url;
+    }
+
+    var map = new mapboxgl.Map({
+          container: 'mapid',
+          style: '{% static "vector_style.json" %}',
+          center: [31.585693, 48.806863],
+          zoom: 6,
+          hash: true
+    });
+
+    // Create a popup, but don't add it to the map yet.
+    var popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false
+    });
+
+    map.on('mouseenter', 'kadcenter_address', enter_point);
+    map.on('mouseenter', 'kadcenter_no_address', enter_point);
+
+    map.on('mouseleave', 'kadcenter_address', leave_point);
+    map.on('mouseleave', 'kadcenter_no_address', leave_point);
+
+    map.on('click', 'kadcenter_address', click_point);
+    map.on('click', 'kadcenter_no_address', click_point);
+
+    map.on('style.load', function () {
+        let control = new MapboxGLLayers({
+            type: 'multiple',
+            layers: {
+                'OpenStreetMap': 'openstreetmap',
+                'Ортофото': 'orto-tiles',
+                'ДЗК': 'dzk'
+            }
+
+        });
+        map.addControl(control);
+        map.setLayoutProperty('openstreetmap', 'visibility', 'visible')
+        control._update();
+
+        prepareFilter();
+    })
+
+    map.addControl(new mapboxgl.NavigationControl());
+
+    var filters = {
+        toggleableLayerIds: {
+            container: 'menu',
+            options: [
+                ['З адресою', ['!=', 'address', '']],
+                ['Без адреси', ['==', 'address', '']]
+            ]
+        },
+        categoryIds: {
+            container: 'category_menu',
+            options: [
+                ["Землі водного фонду", ['==', 'category', "Землі водного фонду"]],
+                ["Землі житлової та громадської забудови", ['==', 'category', "Землі житлової та громадської забудови"]],
+                ["Землі історико-культурного призначення", ['==', 'category', "Землі історико-культурного призначення"]],
+                ["Землі лісогосподарського призначення", ['==', 'category', "Землі лісогосподарського призначення"]],
+                ["Землі оздоровчого призначення", ['==', 'category', "Землі оздоровчого призначення"]],
+                ["Землі природно-заповідного та іншого природоохоронного призначення", ['==', 'category', "Землі природно-заповідного та іншого природоохоронного призначення"]],
+                ["Землі промисловості, транспорту, зв’язку, енергетики, оборони та іншого призначення", ['==', 'category', "Землі промисловості, транспорту, зв’язку, енергетики, оборони та іншого призначення"]],
+                ["Землі рекреаційного призначення", ['==', 'category', "Землі рекреаційного призначення"]],
+                ["Землі сільськогосподарського призначення", ['==', 'category', "Землі сільськогосподарського призначення"]],
+                ["Не визначено", ['any', ['==', 'category', "Не визначено"], ['==', 'category', ""]]],
+            ]
+        }
+
+    }
+
+    function prepareFilter() {
+        var filter = ['all'];
+
+        Object.keys(filters).forEach(function(key) {
+            let localFilter = ['any'];
+            let properties = filters[key];
+            let container_id = properties['container'];
+
+            const container = document.getElementById(container_id);
+            for (let j = 0; j < container.children.length; j++) {
+                if (container.children[j].className === 'active')
+                    localFilter.push(JSON.parse(container.children[j].getAttribute('data-filter')));
+            }
+            filter.push(localFilter);
+        });
+
+        console.log('Applying new filter', filter);
+        map.setFilter('kadcenter_address', filter);
+    }
+
+
+
+    Object.keys(filters).forEach(function(key) {
+        let properties = filters[key];
+        let container_id = properties['container'];
+        let options = properties['options'];
+
+        for (var i = 0; i < options.length; i++) {
+            var id = options[i][0]
+            var filter = options[i][1]
+
+            var link = document.createElement('a');
+            link.href = '#';
+            link.className = 'active';
+            link.textContent = id;
+            link.setAttribute('data-filter', JSON.stringify(filter));
+            link.id = id;
+
+            link.onclick = function (e) {
+                var clickedLayer = this.id;
+                e.preventDefault();
+                e.stopPropagation();
+
+               // toggle button state
+                if (this.className === 'active') {
+                    this.className = '';
+                } else {
+                    this.className = 'active';
+                }
+
+                prepareFilter();
+
+            };
+            var layers = document.getElementById(container_id);
+            layers.appendChild(link);
+        }
+    });
+
+
+    function debounce(func, wait, immediate) {
+        var timeout;
+        return function() {
+            var context = this, args = arguments;
+            var later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    };
+
+    Vue.component('v-select', VueSelect.VueSelect);
+    var app = new Vue({
+      el: '#search',
+      delimiters: ["<%","%>"],
+      data: {
+        options: []
+      },
+        methods: {
+          onChange(event) {
+            var point = new L.Point(event.location[0], event.location[1]);
+            var latlngpoint = L.Projection.SphericalMercator.unproject(point);
+            console.log(latlngpoint);
+            map.flyTo({
+                center: [
+                    latlngpoint.lng,
+                    latlngpoint.lat
+                ],
+                speed: 4,
+                screenSpeed: 4,
+                zoom: 19,
+                essential: true
+            });
+          },
+          onSearch(search, loading) {
+              if (search.length) {
+                  loading(true);
+                  this.search(loading, search, this);
+              }
+          },
+            search: debounce((loading, search, vm) => {
+              fetch(
+                `/search/${search}/`
+              ).then(res => {
+                res.json().then(json => (vm.options = json.results));
+                loading(false);
+              });
+            }, 350)
+        }
+    })
+</script>
+</body>
+</html>

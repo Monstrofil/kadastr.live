@@ -1,0 +1,4 @@
+psycopg2_binary
+django
+pymysql
+django-environ

@@ -1,0 +1,25 @@
+.mapboxgl-layers {
+  max-height: 100vh;
+}
+.mapboxgl-layers ul {
+  background: #fff;
+  margin: 0;
+  padding: 10px;
+  border-radius: 4px;
+  list-style-type: none;
+}
+
+.mapboxgl-layers li {
+  cursor: pointer;
+  position: relative;
+  margin: 0 5px;
+}
+.mapboxgl-layers li.active:before {
+  position: absolute;
+  right: 100%;
+  content: '\2713 ';
+}
+.mapboxgl-layers li.partially-active:before {
+  color: #ccc;
+}
+
