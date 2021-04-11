@@ -9,3 +9,8 @@ Example:
 
     KADASTR_DB_USER=login
     KADASTR_DB_PASSWORD=password
+
+# Editing map style
+
+Use [maputnik](https://maputnik.github.io/editor/) as WYSIWYG editor
+for vector_style.json style located in `static` folder.
