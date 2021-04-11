@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Інформація про земельну ділянку №{{ land.cadnum }}</title>
+
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+
+    <style>
+        #mapid { height: 350px; width: 350px }
+    </style>
+</head>
+<body>
+
+<h1>Інформація про земельну ділянку №{{ land.cadnum }}</h1>
+
+<div>
+    <div style="display: inline-block; vertical-align: top;">
+        <table>
+            <tbody>
+                <tr>
+                    <td>Кадастровий номер</td>
+                    <td>{{ land.cadnum }}</td>
+                </tr>
+                <tr>
+                    <td>площа</td>
+                    <td>{{ land.area }} {{ land.unit_area }}</td>
+                </tr>
+                <tr>
+                    <td>власність</td>
+                    <td>{{ land.ownership|default:"немає даних" }}</td>
+                </tr>
+                <tr>
+                    <td>використання</td>
+                    <td>{{ land.use|default:"немає даних" }}</td>
+                </tr>
+                <tr>
+                    <td>призначення</td>
+                    <td>{{ land.purpose|default:"немає даних" }}</td>
+                </tr>
+                <tr>
+                    <td>категорія</td>
+                    <td>{{ land.category|default:"немає даних" }}</td>
+                </tr>
+                <tr>
+                    <td>адреса</td>
+                    <td>{{ land.address|default:"немає даних" }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="display: inline-block">
+
+        <div id="mapid"></div>
+    </div>
+</div>
+
+
+
+<script>
+    var point = new L.Point({{land.point.x}}, {{land.point.y}});
+    var earthRadius = 6378137;
+    var latlngpoint = L.Projection.SphericalMercator.unproject(point);
+    var map = L.map('mapid').setView([latlngpoint.lat, latlngpoint.lng], 16);
+
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxNativeZoom: 21
+    }).addTo(map);
+
+    var wmsLayer = L.tileLayer.wms(
+        'https://m1.land.gov.ua/geowebcache/service/wms?TILED=true',
+        {'layers': 'kadastr', 'format': 'image/png', 'maxNativeZoom': 16}).addTo(map);
+    var marker = new L.Marker([latlngpoint.lat, latlngpoint.lng], {bounceOnAdd: true}).addTo(map);
+</script>
+</body>
+</html>

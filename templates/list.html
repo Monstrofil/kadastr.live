@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Перелік замельних ділянок земельного кадастру України</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+</head>
+<body>
+    <div>
+        <h1>Перелік відомих земельних ділянок</h1>
+    <table>
+        <thead>
+        <tr>
+            <td><b>Номер</b></td>
+            <td><b>Цільове призначення</b></td>
+            <td><b>Адреса</b></td>
+        </tr>
+        </thead>
+        {% for landuse in page_obj %}
+            <tr>
+                <td style="min-width: 200px"><a href="{% url "cad_info" landuse.cadnum %}">{{ landuse.cadnum }}</a></td>
+                <td style="min-width: 200px">{{ landuse.purpose_code }}</td>
+                <td>{{ landuse.address|default:"невідомо" }}</td>
+            </tr>
+        {% endfor %}
+
+    </table>
+
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; перша</a>
+                <a href="?page={{ page_obj.previous_page_number }}">попередня</a>
+            {% endif %}
+
+            <span class="current">
+                Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">наступна</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">остання &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    </div>
+</body>
+</html>
