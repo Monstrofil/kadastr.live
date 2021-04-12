@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,55 +11,70 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
    crossorigin=""></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/pure-min.css">
+
     <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static "favicon/apple-touch-icon.png" %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static "favicon/favicon-32x32.png" %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static "favicon/favicon-16x16.png" %}">
+    <link rel="manifest" href="{% static "favicon/site.webmanifest" %}">
+    <link rel="mask-icon" href="{% static "favicon/safari-pinned-tab.svg" color="#5bbad5" %}">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="{% static "style.css" %}">
 
     <style>
         #mapid { height: 350px; width: 350px }
     </style>
 </head>
 <body>
+<div class="content">
 
-<h1>Інформація про земельну ділянку №{{ land.cadnum }}</h1>
+    <h1>Інформація про земельну ділянку №{{ land.cadnum }}</h1>
 
-<div>
-    <div style="display: inline-block; vertical-align: top;">
-        <table>
-            <tbody>
-                <tr>
-                    <td>Кадастровий номер</td>
-                    <td>{{ land.cadnum }}</td>
-                </tr>
-                <tr>
-                    <td>площа</td>
-                    <td>{{ land.area }} {{ land.unit_area }}</td>
-                </tr>
-                <tr>
-                    <td>власність</td>
-                    <td>{{ land.ownership|default:"немає даних" }}</td>
-                </tr>
-                <tr>
-                    <td>використання</td>
-                    <td>{{ land.use|default:"немає даних" }}</td>
-                </tr>
-                <tr>
-                    <td>призначення</td>
-                    <td>{{ land.purpose|default:"немає даних" }}</td>
-                </tr>
-                <tr>
-                    <td>категорія</td>
-                    <td>{{ land.category|default:"немає даних" }}</td>
-                </tr>
-                <tr>
-                    <td>адреса</td>
-                    <td>{{ land.address|default:"немає даних" }}</td>
-                </tr>
-            </tbody>
-        </table>
+    <div>
+        <div style="display: inline-block; vertical-align: top;">
+            <table class="pure-table pure-table-horizontal">
+                <tbody>
+                    <tr>
+                        <td>Кадастровий номер</td>
+                        <td>{{ land.cadnum }}</td>
+                    </tr>
+                    <tr>
+                        <td>площа</td>
+                        <td>{{ land.area }} {{ land.unit_area }}</td>
+                    </tr>
+                    <tr>
+                        <td>власність</td>
+                        <td>{{ land.ownership|default:"немає даних" }}</td>
+                    </tr>
+                    <tr>
+                        <td>використання</td>
+                        <td>{{ land.use|default:"немає даних" }}</td>
+                    </tr>
+                    <tr>
+                        <td>призначення</td>
+                        <td>{{ land.purpose|default:"немає даних" }}</td>
+                    </tr>
+                    <tr>
+                        <td>категорія</td>
+                        <td>{{ land.category|default:"немає даних" }}</td>
+                    </tr>
+                    <tr>
+                        <td>адреса</td>
+                        <td>{{ land.address|default:"немає даних" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="display: inline-block;">
+            <div id="mapid"></div>
+        </div>
+
+
     </div>
-    <div style="display: inline-block">
 
-        <div id="mapid"></div>
-    </div>
 </div>
 
 

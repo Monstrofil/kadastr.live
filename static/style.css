@@ -1,0 +1,190 @@
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: Helvetica Neue,Arial,Helvetica,sans-serif;
+}
+.button-success {
+    background: rgb(28, 184, 65);
+    color: white;
+    /* this is a green */
+}
+
+.button-error {
+    background: rgb(202, 60, 60);
+    /* this is a maroon */
+}
+
+.button-warning {
+    background: rgb(223, 117, 20);
+    /* this is an orange */
+}
+
+.button-secondary {
+    background: rgb(66, 184, 221);
+    /* this is a light blue */
+}
+
+.content {
+    padding: 10px;
+}
+
+
+.menu {
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+}
+
+#export {
+    position: absolute;
+    z-index: 1;
+    bottom: 30px;
+    right: 10px;
+}
+#menu {
+    width: 100px;
+}
+.menu {
+    display: block;
+    text-align: left;
+    width: 300px;
+}
+
+.menu {
+    display: block;
+    text-align: left;
+    width: 300px;
+    margin-left: -1em;
+}
+.menu a {
+    display: block;
+    line-height: 1.2;
+    padding: 0.3em 0.5em;
+    white-space: normal;
+    text-decoration: none;
+    background-color: #fff;
+    border-top: 1px solid #0003;;
+}
+
+
+.menu a {
+    color: #404040;
+}
+
+.menu a:hover {
+    background-color: #f8f8f8;
+    color: #404040;
+}
+
+.menu a.active {
+    background-color: #3887be;
+    color: #ffffff;
+}
+
+.menu a.active:hover {
+    background: #3074a4;
+}
+
+
+img {
+    height: auto;
+    max-width: 2.5rem;
+    margin-right: 1rem;
+}
+
+.d-center {
+    display: flex;
+    align-items: center;
+}
+
+.selected img {
+    width: auto;
+    max-height: 23px;
+    margin-right: 0.5rem;
+}
+
+.v-select .dropdown li {
+    border-bottom: 1px solid rgba(112, 128, 144, 0.1);
+}
+
+.v-select .dropdown li:last-child {
+    border-bottom: none;
+}
+
+.v-select .dropdown li a {
+    padding: 10px 20px;
+    width: 100%;
+    font-size: 1.25em;
+    color: #3c3c3c;
+}
+
+.v-select .dropdown-menu .active > a {
+    color: #fff;
+}
+
+
+/***********layers******/
+.mapboxgl-map {
+    font-size: 0.9em;
+}
+.mapboxgl-layers ul {
+    box-shadow: 0 0 0 2px rgb(0 0 0 / 10%);
+}
+.mapboxgl-layers ul li{
+
+}
+.mapboxgl-layers li.active:before {
+    font-size: 1.6em;
+}
+.mapboxgl-ctrl.mapboxgl-layers ul {
+    padding: 2px 2px 2px 12px;
+    padding: 0.2em 0.2em 0.2em 1em;
+}
+
+
+/***********search******/
+#search {
+    z-index: 1;
+    width: calc(100% - 58px);
+    max-width: 800px;
+    position: relative;
+    top: 10px;
+    left: 10px;
+}
+#search .vs__dropdown-toggle{
+    background-color: #fff;
+    z-index: 1;
+    position: relative;
+    box-shadow: 0 0 0 2px rgb(0 0 0 / 10%);
+}
+
+
+/**************Filter map****************/
+.filter_row {
+
+    position: absolute;
+    z-index: 1;
+    bottom: 10px;
+    left: 10px;
+
+}
+
+.toggler {
+    user-select: none;
+}
+
+@media (max-width:640px)  {
+    body {
+        font-size: 12px;
+    }
+    #export {
+        bottom: 10px;
+        right: 40px;
+    }
+    #category_menu {
+        width: calc(100vw - 20px);
+        left: 0;
+        margin-left: 0;
+    }
+}

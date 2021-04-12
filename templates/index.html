@@ -13,151 +13,32 @@
    crossorigin=""></script>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
 
-    <style>
-        #mapid { height: 100%; width: 100%; position: absolute; top: 0}
-        body {
-            padding: 0;
-            margin: 0;
-        }
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/pure-min.css">
 
-        .menu {
-            background: #fff;
-            position: absolute;
-            z-index: 1;
-            border-radius: 3px;
-            border: 1px solid rgba(0, 0, 0, 0.4);
-            font-family: 'Open Sans', sans-serif;
-            bottom: 100%;
-        }
-        
-
-        @media (min-width:600px)  {
-            .menu a {
-                font-size: 13px;
-                padding: 0;
-                padding: 5px;
-            }
-            #export a {
-                font-size: 13px;
-                padding: 0;
-                padding: 10px;
-            }
-        }
-        @media (max-width:600px)  {
-            .menu a {
-                font-size: 13px;
-                padding: 0;
-                padding: 5px;
-            }
-            #export a {
-                font-size: 13px;
-                padding: 0;
-                padding: 20px;
-            }
-        }
-
-        #export {
-            background: #fff;
-            position: absolute;
-            z-index: 1;
-            bottom: 30px;
-            right: 10px;
-            border-radius: 3px;
-            border: 1px solid rgba(0, 0, 0, 0.4);
-            font-family: 'Open Sans', sans-serif;
-        }
-
-        .menu a {
-            color: #404040;
-            display: block;
-            margin: 0;
-            text-decoration: none;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-            text-align: left;
-        }
-
-        #export a {
-            color: #404040;
-            display: block;
-            margin: 0;
-            text-decoration: none;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-            text-align: left;
-        }
-
-        .menu a:last-child {
-            border: none;
-        }
-
-        .menu a:hover {
-            background-color: #f8f8f8;
-            color: #404040;
-        }
-
-        .menu a.active {
-            background-color: #3887be;
-            color: #ffffff;
-        }
-
-        .menu a.active:hover {
-            background: #3074a4;
-        }
-
-        img {
-              height: auto;
-              max-width: 2.5rem;
-              margin-right: 1rem;
-            }
-
-            .d-center {
-              display: flex;
-              align-items: center;
-            }
-
-            .selected img {
-              width: auto;
-              max-height: 23px;
-              margin-right: 0.5rem;
-            }
-
-            .v-select .dropdown li {
-              border-bottom: 1px solid rgba(112, 128, 144, 0.1);
-            }
-
-            .v-select .dropdown li:last-child {
-              border-bottom: none;
-            }
-
-            .v-select .dropdown li a {
-              padding: 10px 20px;
-              width: 100%;
-              font-size: 1.25em;
-              color: #3c3c3c;
-            }
-
-            .v-select .dropdown-menu .active > a {
-              color: #fff;
-            }
-
-        #search {
-            width: calc(100% - 50px);
-            max-width: 800px;
-        }
-
-
-    </style>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static "favicon/apple-touch-icon.png" %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static "favicon/favicon-32x32.png" %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static "favicon/favicon-16x16.png" %}">
+    <link rel="manifest" href="{% static "favicon/site.webmanifest" %}">
+    <link rel="mask-icon" href="{% static "favicon/safari-pinned-tab.svg" color="#5bbad5" %}">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- use the latest vue-select release -->
     <script src="https://unpkg.com/vue-select@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css">
-
+    <style>
+        #mapid { height: 100%; width: 100%; position: absolute; top: 0}
+    </style>
     <script src="{% static "mapbox-gl-layers.js" %}"></script>
     <link rel="stylesheet" href="{% static "mapbox-gl-layers.css" %}">
+    <link rel="stylesheet" href="{% static "style.css" %}">
+
+
 </head>
 <body>
 
-    <div id="search" style="width: 50%; z-index: 999999;">
-        <v-select style="z-index: 99999; background-color: white;" placeholder="Почніть вводити адресу" label="id" :filterable="false" :options="options" @search="onSearch" @input="onChange($event)">
+    <div id="search">
+        <v-select placeholder="Почніть вводити адресу" label="id" :filterable="false" :options="options" @search="onSearch" @input="onChange($event)">
         <template slot="no-options">
           Почніть вводити адресу
         </template>
@@ -175,38 +56,15 @@
     </div>
 
 <div id="mapid"></div>
-    <style>
-        .filter_row {
-            background: #fff;
-            position: absolute;
-            z-index: 1;
-            bottom: 10px;
-            left: 10px;
-            border-radius: 3px;
-            border: 1px solid rgba(0, 0, 0, 0.4);
-            font-family: 'Open Sans', sans-serif;
-        }
 
-        .filter_row .filter_column {
-            height: 30px;
-            display: inline-block;
-            padding: 5px 10px;
-            line-height: 30px;
-            cursor: pointer;
-        }
-
-        .toggler {
-            user-select: none;
-        }
-    </style>
-<div class="filter_row">
-    <div class="filter_column address_filter toggler" data-toggle="menu">
+<div class="filter_row pure-button-group"  role="group">
+    <div class="filter_column address_filter toggler pure-button pure-button-primary " data-toggle="menu">
         Адреси
-        <div id="menu" class="menu toggled_menu" style="display: none; margin-left: -10px;"></div>
+        <div id="menu" class="menu toggled_menu"></div>
     </div>
-    <div class="filter_column category_filter toggler" data-toggle="category_menu">
+    <div class="filter_column category_filter toggler pure-button pure-button-primary" data-toggle="category_menu">
         Категорії
-        <div id="category_menu" class="menu toggled_menu" style="display: none; width: 300px; margin-left: -10px;"></div>
+        <div id="category_menu" class="menu toggled_menu" ></div>
     </div>
 </div>
 <script>
@@ -236,7 +94,7 @@
     });
 </script>
 <div id="export">
-    <a style="cursor: pointer;" onclick="export_geojson();">Export | Експорт</a>
+    <a class="button-success pure-button" onclick="export_geojson();">Export | Експорт</a>
 </div>
 
 
