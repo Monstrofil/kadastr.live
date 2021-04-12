@@ -66,6 +66,10 @@
         Категорії
         <div id="category_menu" class="menu toggled_menu" hidden></div>
     </div>
+    <div class="filter_column category_filter toggler pure-button pure-button-primary" data-toggle="ownership_menu">
+        Власність
+        <div id="ownership_menu" class="menu toggled_menu" hidden></div>
+    </div>
 </div>
 <script>
     document.querySelectorAll('div.toggler').forEach(item => {
@@ -86,7 +90,7 @@
     function closeAllMenus() {
         console.log('Closing all menus');
         document.querySelectorAll('.toggled_menu').forEach(item => {
-            item.style.display = "none";
+            item.hidden = true;
         });
     }
     document.getElementById('mapid').addEventListener('mousedown', event => {
@@ -119,6 +123,9 @@
         }
         if (e.features[0].properties.category) {
             description += '<br>Категорія: ' + e.features[0].properties.category;
+        }
+        if (e.features[0].properties.ownership) {
+            description += '<br>Власність: ' + e.features[0].properties.ownership;
         }
 
         // Ensure that if the map is zoomed out such that multiple
@@ -211,6 +218,15 @@
                 ["Землі рекреаційного призначення", ['==', 'category', "Землі рекреаційного призначення"]],
                 ["Землі сільськогосподарського призначення", ['==', 'category', "Землі сільськогосподарського призначення"]],
                 ["Не визначено", ['any', ['==', 'category', "Не визначено"], ['==', 'category', ""]]],
+            ]
+        },
+        ownerShipIds: {
+            container: 'ownership_menu',
+            options: [
+                ["Державна власність", ['==', 'ownership', "Державна власність"]],
+                ["Комунальна власність", ['==', 'ownership', "Комунальна власність"]],
+                ["Приватна власність", ['==', 'ownership', "Приватна власність"]],
+                ["Не визначено", ['==', 'ownership', "Не визначено"]],
             ]
         }
 
