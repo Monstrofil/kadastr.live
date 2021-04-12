@@ -60,11 +60,11 @@
 <div class="filter_row pure-button-group"  role="group">
     <div class="filter_column address_filter toggler pure-button pure-button-primary " data-toggle="menu">
         Адреси
-        <div id="menu" class="menu toggled_menu"></div>
+        <div id="menu" class="menu toggled_menu" hidden></div>
     </div>
     <div class="filter_column category_filter toggler pure-button pure-button-primary" data-toggle="category_menu">
         Категорії
-        <div id="category_menu" class="menu toggled_menu" ></div>
+        <div id="category_menu" class="menu toggled_menu" hidden></div>
     </div>
 </div>
 <script>
@@ -75,10 +75,10 @@
         item.addEventListener('click', event => {
             console.log('Toggling', event.target, event.target.getAttribute('data-toggle'));
             const x = document.getElementById(event.target.getAttribute('data-toggle'));
-            if (x.style.display === "none") {
-                x.style.display = "block";
+            if (!isVisible(x)) {
+                x.hidden = false;
             } else {
-                x.style.display = "none";
+                x.hidden = true;
             }
         })
     });
@@ -92,6 +92,10 @@
     document.getElementById('mapid').addEventListener('mousedown', event => {
         closeAllMenus();
     });
+
+    function isVisible(element) {
+        return (element.offsetWidth > 0 && element.offsetHeight > 0)
+    }
 </script>
 <div id="export">
     <a class="button-success pure-button" onclick="export_geojson();">Export | Експорт</a>
