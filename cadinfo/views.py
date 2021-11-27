@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, View, ListView
 from prometheus_client import CollectorRegistry, generate_latest, Metric, Gauge
 
-from cadinfo.models import Landuse, Koatuu, AddressIndex
+from cadinfo.models import Landuse, Koatuu, SearchIndex
 
 
 class LandInfoView(TemplateView):
@@ -75,16 +75,32 @@ class ExportGeoJsonView(View):
 
 class SearchView(View):
     def get(self, request, search, *args, **kwargs):
-        results = AddressIndex.objects.raw("SELECT id FROM test1 WHERE match(%s) LIMIT 10", params=(search,))
+        searchBy = request.GET.get('searchBy', 'address')
+        if searchBy == 'address':
+            results = SearchIndex.objects.raw(
+                "SELECT id FROM test1 WHERE match(%s) LIMIT 10",
+                params=(search,)
+            )
+        elif searchBy == 'usage':
+            results = SearchIndex.objects.raw(
+                "SELECT id FROM usage_index WHERE match(%s) LIMIT 10",
+                params=(search,)
+            )
+        else:
+            return HttpResponse(status_code=400)
         landuses = Landuse.objects.filter(id__in=[r.id for r in results]).all()
+
+        results = []
+        for landuse in landuses:
+            landuse.point.transform(3857)
+            results.append({
+                'id': landuse.id,
+                'value': landuse.address if searchBy == 'address' else landuse.use,
+                'location': [landuse.point.x, landuse.point.y]
+            })
+
         response = HttpResponse(json.dumps({
-            'results': [
-                {
-                    'id': landuse.id,
-                    'address': landuse.address,
-                    'location': [landuse.point.x, landuse.point.y]
-                } for landuse in landuses
-            ]
+            'results': results
         }), content_type="application/json")
         return response
 

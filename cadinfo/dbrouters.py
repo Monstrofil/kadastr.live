@@ -1,4 +1,4 @@
-from .models import Landuse, Koatuu, AddressIndex
+from .models import Landuse, Koatuu, SearchIndex
 
 LANDUSE_MODELS = (
     Landuse,
@@ -16,7 +16,7 @@ class DBRouter(object):
         """ reading SomeModel from otherdb """
         if model in LANDUSE_MODELS:
             return LANDUSE_DB
-        elif model == AddressIndex:
+        elif model == SearchIndex:
             return SPHINX_DB
         return PRIMARY_DB
 

@@ -38,18 +38,34 @@
 <body>
 
     <div id="search">
-        <v-select placeholder="Почніть вводити адресу" label="id" :filterable="false" :options="options" @search="onSearch" @input="onChange($event)">
+        <v-select
+            style="display: inline-block; width: 200px;"
+            :options="searchBy"
+            :default="'address'"
+            v-model="selectedSearchBy"
+            @search="onSearch"
+            @input="onChange($event)">
+
+        </v-select>
+        <v-select
+            style="display: inline-block; width: calc(100% - 258px); max-width: 1000px;"
+            placeholder="Почніть вводити адресу"
+            label="id"
+            :filterable="false"
+            :options="options"
+            @search="onSearch"
+            @input="onChange($event)">
         <template slot="no-options">
           Почніть вводити адресу
         </template>
         <template slot="option" slot-scope="option">
           <div class="d-center">
-              <% option.address %>
+              <% option.value %>
             </div>
         </template>
         <template slot="selected-option" slot-scope="option">
           <div class="selected d-center">
-            <% option.address %>
+            <% option.value %>
           </div>
         </template>
       </v-select>
@@ -184,7 +200,8 @@
             layers: {
                 'OpenStreetMap': 'openstreetmap',
                 'Ортофото': 'orto-tiles',
-                'ДЗК': 'dzk'
+                'ДЗК': 'dzk',
+                'Вектор': 'land_polygones',
             }
 
         });
@@ -311,7 +328,21 @@
       el: '#search',
       delimiters: ["<%","%>"],
       data: {
-        options: []
+          options: [],
+          selectedSearchBy: {
+              'label': 'Адреса',
+              'code': 'address'
+          },
+          searchBy: [
+              {
+                  'label': 'Адреса',
+                  'code': 'address'
+              },
+              {
+                  'label': 'Використання',
+                  'code': 'usage'
+              }
+          ]
       },
         methods: {
           onChange(event) {
@@ -337,7 +368,7 @@
           },
             search: debounce((loading, search, vm) => {
               fetch(
-                `/search/${search}/`
+                `/search/${search}/?searchBy=` + vm.selectedSearchBy.code
               ).then(res => {
                 res.json().then(json => (vm.options = json.results));
                 loading(false);
