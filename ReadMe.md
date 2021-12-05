@@ -1,3 +1,19 @@
+# Introduction
+
+This project is not what you think it is.
+
+There's no developers from [DZK](https://dzk.gov.ua/) here, it does not
+use data from [data.land.gov.ua](https://data.land.gov.ua/). 
+Don't use data as official source of information.
+
+The only initial goal was to collect parcel addressee for the
+[OSM](https://www.openstreetmap.org/#map=14/48.5183/35.2646) project.
+
+There are no plans to do something with data or setup regular updates, 
+author could give you whatever raw data you want.
+
+![Map, the best map ever](/static/main_page.png)
+
 # Installation
 
     pip install -r requirements.txt
@@ -10,7 +26,19 @@ Example:
     KADASTR_DB_USER=login
     KADASTR_DB_PASSWORD=password
 
+Run it as regular django website.
+
 # Editing map style
 
 Use [maputnik](https://maputnik.github.io/editor/) as WYSIWYG editor
 for vector_style.json style located in `static` folder.
+
+# Missing parts
+
+Lots of logic that works with land.gov.ua is still hidden because author
+is too lazy to remove all credentials and secrets from code. One day either it will be
+published or I'll accidentally publish it with all passwords compromised.
+
+# Contacts
+
+You can contact author using Issues on GitHub or using telegram: Monstrofil.

@@ -9,6 +9,7 @@ from cadinfo.models import Landuse
 
 
 class NoCountPaginationClass(Paginator):
+    @property
     def count(self):
         return sys.maxsize
 
