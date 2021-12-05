@@ -10,7 +10,8 @@ class Command(BaseCommand):
     help = 'Create random users'
 
     def add_arguments(self, parser: ArgumentParser):
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.INFO,
+                            format='%(asctime)s %(levelname)-8s %(processName)s %(threadName)s %(message)s')
 
         subparsers = parser.add_subparsers(dest='action', required=True)
 

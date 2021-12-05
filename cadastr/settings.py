@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
+    'rest_framework',
+    'rest_framework_gis',
     'cadinfo'
 ]
 
@@ -166,6 +168,11 @@ from django.db.backends.mysql import features
 # dirty hack to work with sphinxql
 features.DatabaseFeatures.is_sql_auto_is_null_enabled = False
 
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
+}
 
 try:
     import settings_local

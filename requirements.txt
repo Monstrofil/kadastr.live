@@ -5,3 +5,6 @@ django-environ
 prometheus_client
 retry.it
 cachetools
+djangorestframework-filters
+djangorestframework
+djangorestframework-gis

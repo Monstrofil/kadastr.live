@@ -18,6 +18,7 @@ class Landuse(models.Model):
     address = models.TextField()
 
     created_at = models.BigIntegerField()
+    deleted_at = models.BigIntegerField()
 
     point = gis.PointField(null=True)
     bbox = gis.GeometryField(null=True)
@@ -29,15 +30,15 @@ class Landuse(models.Model):
     def get_hash(self):
         return hashlib.md5(
             ';'.join([
-                self.cadnum,
-                self.area,
-                self.unit_area,
-                self.koatuu,
-                self.use,
-                self.purpose,
-                self.purpose_code,
-                self.ownership,
-                self.address,
+                str(self.cadnum),
+                str(self.area),
+                str(self.unit_area),
+                str(self.koatuu),
+                str(self.use),
+                str(self.purpose),
+                str(self.purpose_code),
+                str(self.ownership),
+                str(self.address),
             ]).encode()
         ).hexdigest()
 
@@ -53,8 +54,6 @@ class Koatuu(models.Model):
     koatuu_id = models.IntegerField()
     name = models.TextField()
     type = models.CharField(max_length=2)
-
-    # parent = models.ForeignKey('self', on_delete=models.CASCADE)
 
     class Meta:
         managed = False
