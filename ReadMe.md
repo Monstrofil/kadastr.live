@@ -2,9 +2,9 @@
 
 This project is not what you think it is.
 
-There's no developers from [DZK](https://dzk.gov.ua/) here, it does not
+[DZK](https://dzk.gov.ua/) developers might not even know about this project, it does not
 use data from [data.land.gov.ua](https://data.land.gov.ua/). 
-Don't use data as official source of information.
+Don't use data as an official source of information.
 
 The only initial goal was to collect parcel addressee for the
 [OSM](https://www.openstreetmap.org/#map=14/48.5183/35.2646) project.
