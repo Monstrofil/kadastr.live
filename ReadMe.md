@@ -6,8 +6,8 @@ This project is not what you think it is.
 use data from [data.land.gov.ua](https://data.land.gov.ua/). 
 Don't use data as an official source of information.
 
-The only initial goal was to collect parcel addressee for the
-[OSM](https://www.openstreetmap.org/#map=14/48.5183/35.2646) project.
+The only initial goal was to collect parcel addresses for the
+[OSM](https://www.openstreetmap.org/) project.
 
 There are no plans to do something with data or setup regular updates, 
 author could give you whatever raw data you want.
