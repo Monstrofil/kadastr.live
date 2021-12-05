@@ -10,7 +10,7 @@ The only initial goal was to collect parcel addresses for the
 [OSM](https://www.openstreetmap.org/) project.
 
 There are no plans to do something with data or setup regular updates, 
-author could give you whatever raw data you want.
+but author can give you whatever raw data you want.
 
 ![Map, the best map ever](/static/main_page.png)
 
@@ -37,8 +37,8 @@ for vector_style.json style located in `static` folder.
 
 Lots of logic that works with land.gov.ua is still hidden because author
 is too lazy to remove all credentials and secrets from code. One day either it will be
-published or I'll accidentally publish it with all passwords compromised.
+published, or I'll accidentally publish it with all passwords compromised.
 
 # Contacts
 
-You can contact author using Issues on GitHub or using telegram: Monstrofil.
+You can contact author using Issues on GitHub or using telegram: Monstrofil
