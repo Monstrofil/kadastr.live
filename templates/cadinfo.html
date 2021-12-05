@@ -81,20 +81,26 @@
 
 <script>
     var point = new L.Point({{land.point.x}}, {{land.point.y}});
-    var earthRadius = 6378137;
-    var latlngpoint = L.Projection.SphericalMercator.unproject(point);
-    var map = L.map('mapid').setView([latlngpoint.lat, latlngpoint.lng], 16);
+    var map = L.map('mapid').setView([point.y, point.x], 16);
 
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxNativeZoom: 21
+        maxNativeZoom: 25
     }).addTo(map);
 
-    var wmsLayer = L.tileLayer.wms(
-        'https://m1.land.gov.ua/geowebcache/service/wms?TILED=true',
-        {'layers': 'kadastr', 'format': 'image/png', 'maxNativeZoom': 16}).addTo(map);
-    var marker = new L.Marker([latlngpoint.lat, latlngpoint.lng], {bounceOnAdd: true}).addTo(map);
+    var marker = new L.Marker([point.y, point.x], {bounceOnAdd: true}).addTo(map);
+
+    var geojsonFeature = {
+        "type": "Feature",
+        "properties": {
+            "name": "Coors Field",
+            "amenity": "Baseball Stadium",
+            "popupContent": "This is where the Rockies play!"
+        },
+        "geometry": {{ land.geometry.json | safe }}
+    };
+    L.geoJSON(geojsonFeature).addTo(map);
 </script>
 </body>
 </html>
