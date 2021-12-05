@@ -113,8 +113,11 @@ class MetricsView(View):
         super(MetricsView, self).__init__()
 
     def get(self, request, *args, **kwargs):
-        self.landuse_counter.set(Landuse.objects.count())
-        self.landuse_processed_counter.set(Landuse.objects.filter(address__isnull=False).count())
+        # TODO: refresh this code with optimized queues
+        # self.landuse_counter.set(Landuse.objects.count())
+        self.landuse_counter.set(-1)
+        # self.landuse_processed_counter.set(Landuse.objects.filter(address__isnull=False).count())
+        self.landuse_processed_counter.set(-1)
         response = HttpResponse(generate_latest(), content_type="application/json")
         return response
 
