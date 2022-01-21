@@ -5,19 +5,32 @@
   "sources": {
     "cadastr": {
       "type": "vector",
-      "url": "https://tiles.kadastr.live/capabilities/kadastr.json",
+      "url": "https://test.tiles.kadastr.live/capabilities/kadastr.json",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
     "raster-tiles": {
       "type": "raster",
-      "tiles": ["https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"],
+      "tiles": [
+        "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      ],
       "tileSize": 256,
       "attribution": "OpenStreetMap contributors",
       "maxzoom": 19
     },
+    "arcgis-world-imagery-ZYX": {
+      "type": "raster",
+      "tiles": [
+        "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+      ],
+      "tileSize": 256,
+      "attribution": "Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community",
+      "maxzoom": 17
+    },
     "orto-tiles": {
       "type": "raster",
-      "tiles": ["/map/rtile/carto_2240035321813140995/ua/{z}/{x}/{y}.png"],
+      "tiles": ["https://test.kadastr.live/map/rtile/carto_2240035321813140995/ua/{z}/{x}/{y}.png"],
       "tileSize": 256,
       "attribution": "DZK",
       "maxzoom": 19
@@ -30,6 +43,13 @@
       "tileSize": 256,
       "attribution": "ДЗК",
       "maxzoom": 16
+    },
+    "dummy": {
+      "type": "geojson",
+      "data": {
+        "type": "FeatureCollection",
+        "features": []
+      }
     }
   },
   "glyphs": "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
@@ -38,6 +58,14 @@
       "id": "openstreetmap",
       "type": "raster",
       "source": "raster-tiles",
+      "minzoom": 0,
+      "maxzoom": 22,
+      "layout": {"visibility": "visible"}
+    },
+    {
+      "id": "orto-ersi",
+      "type": "raster",
+      "source": "arcgis-world-imagery-ZYX",
       "minzoom": 0,
       "maxzoom": 22,
       "layout": {"visibility": "none"}
@@ -65,9 +93,24 @@
       "source-layer": "land_polygons",
       "layout": {"visibility": "visible"},
       "paint": {
-        "fill-opacity": 0.3,
-        "fill-color": "rgba(41, 162, 200, 1)",
-        "fill-outline-color": "rgba(0, 0, 0, 1)"
+        "fill-opacity": [
+          "case",
+          ["boolean", ["feature-state", "hover"], false],
+          ["literal", 0.85],
+          ["literal", 0.5]
+        ],
+        "fill-color": [
+          "case",
+          ["boolean", ["==", ["get", "address"], null], false],
+          "rgba(41, 162, 200, 1)",
+          "rgba(41, 200, 162, 1)"
+        ],
+        "fill-outline-color": [
+          "case",
+          ["boolean", ["==", ["get", "address"], null], false],
+          "rgba(0, 0, 0, 1)",
+          "rgba(0, 0, 0, 1)"
+        ]
       }
     },
     {
