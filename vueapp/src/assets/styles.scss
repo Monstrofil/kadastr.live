@@ -1,0 +1,180 @@
+// Define variable defaults
+//$body-bg: #000;
+//$body-color: #111;
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1480px,
+  xxl: 1680px
+);
+
+// Then import Bootstrap an BootstrapVue SCSS files (order is important)
+@import url("//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "e-ukraine";
+
+.compare {
+  padding: 0.25em 0.25em 0.25em;
+  margin: 0 0.1em;
+  font-weight: 300;
+  border-radius: 0.25em;
+  color: #FFF;
+  //font-size: smaller;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  &.ok {
+    background-color: #41B883;
+    color: white;
+  }
+  &.neutral {
+    background-color: #878787;
+    color: white;
+  }
+  &.warning {
+    background-color: #e48051;
+    color: white;
+  }
+  &.error {
+    background-color: #e45151;
+    color: white;
+  }
+}
+
+body {
+  font-weight: 300;
+  font-size: 14px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+
+h2 {
+  margin-bottom: 25px;
+}
+
+.text-block a[target=_blank]:after {
+  content: "\f08e";
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  margin-left: 5px;
+}
+
+p {
+  line-height: 28px;
+}
+
+.nav-header {
+  a:hover {
+    border-bottom: 2px solid #000;
+  }
+
+  a {
+    display: block;
+    font-weight: 500;
+    font-size: 13px;
+    padding: 8px 0;
+    border-bottom: 2px solid transparent;
+  }
+}
+
+.nav-header {
+  .header-nav-item a.active {
+    border-bottom: 1px solid #000;
+  }
+}
+
+.nav-tabs {
+  a {
+    display: block;
+    font-weight: 500;
+    font-size: 13px;
+    //padding: 8px 0;
+    //border-bottom: 2px solid transparent;
+  }
+
+  .nav-link {
+    color: #555555;
+  }
+
+  .nav-link.active {
+    color: #000000;
+  }
+}
+
+.nav-header {
+  .header-nav-item {
+    padding: 10px;
+  }
+}
+
+.breadcrumbs {
+  color: #8c8e91;
+  font-weight: 500;
+  margin: 48px 0 16px;
+  font-weight: 500;
+  //margin: 32px 0 10px;
+
+  ul {
+    flex-wrap: wrap;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  ul > li:not(:last-child) {
+    position: relative;
+    padding-right: 17px;
+  }
+
+  ul > li:not(:last-child):after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 8px;
+    width: 1px;
+    height: 14px;
+    border-right: 1px solid #000;
+    opacity: 0.5;
+  }
+
+  ul > li > a,
+  ul > li > span {
+    color: #000;
+    opacity: 0.5;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  ul > li > a:hover {
+    color: #000;
+  }
+
+  ul > li:not(:last-child):after {
+    height: 12px;
+    top: 3px;
+  }
+}
+
+
+.mgl-layerControlDirectory > .directory {
+  font-size: 16px !important;
+}
+
+.mgl-layerControlGroupHeading {
+    font-weight: 500;
+    font-size: 16px !important;
+}

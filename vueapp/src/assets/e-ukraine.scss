@@ -1,0 +1,78 @@
+@font-face {
+	font-family: "e-ukraine";
+	font-style: normal;
+	src: url("./fonts/web/e-Ukraine-Light.woff") format("woff");
+	font-weight: 300
+}
+
+@font-face {
+	font-family: "e-ukraine";
+	font-style: normal;
+	src: url("./fonts/web/e-Ukraine-Regular.woff") format("woff");
+	font-weight: 400
+}
+
+@font-face {
+	font-family: "e-ukraine";
+	font-style: normal;
+	src: url("./fonts/web/e-Ukraine-Medium.woff") format("woff");
+	font-weight: 500
+}
+
+@font-face {
+	font-family: "e-ukraine-heading";
+	font-style: normal;
+	src: url("./fonts/web/e-UkraineHead-Regular.woff") format("woff");
+	font-weight: 400
+}
+
+body {
+	font-family: "e-Ukraine", sans-serif;
+    font-size: 16px;
+    color: #000;
+    font-weight: 300;
+    line-height: 1;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 400;
+}
+
+h1 {
+    font-size: 56px;
+    line-height: 60px;
+}
+h2 {
+    font-size: 38px;
+    line-height: 40px;
+}
+h3 {
+    line-height: 34px;
+}
+h4 {
+    font-size: 26px;
+    line-height: 30px;
+}
+h5,
+h6 {
+    font-size: 20px;
+    line-height: 24px;
+}
+h6 {
+    font-size: 18px;
+}
+
+a {
+	color: #000;
+    text-decoration: none;
+	font-weight: 400;
+}
+
+a:hover {
+  color: #000;
+}
