@@ -1,0 +1,144 @@
+[webserver]
+port = ":8686"
+
+# register data providers
+[[mvt_providers]]
+name = "kadastr"
+type = "postgis"
+host = "parkingdp.online"
+port = 12321
+database = "postgres"
+user = "${PG_USER}"
+password = "${PG_PASSWORD}"
+srid = 3857
+
+  [[mvt_providers.layers]]
+  name = "land_polygons"
+  geometry_fieldname = "geometry"
+  geometry_type = "polygon"
+  id_fieldname = "id"
+  srid = 4326
+  sql = """
+    SELECT
+      q.*,
+      (SELECT address FROM cadinfo_address WHERE cadinfo_address.cadnum = q.cadnum) AS address
+    FROM (
+		SELECT
+		  ST_AsMVTGeom(ST_AsBinary(geometry::geometry), !BBOX!) AS geometry,
+		  ownership,
+		  cadnum,
+		  purpose,
+		  category,
+		  id
+		FROM landuse
+		WHERE
+		  revision = (
+			SELECT id
+			FROM cadinfo_update
+			WHERE status = 'success'
+			ORDER BY id DESC
+			LIMIT 1
+		  ) AND
+		  geometry && !BBOX!
+    ) q
+
+  """
+
+{% for update in updates %}
+  [[mvt_providers.layers]]
+  name = "parcels_history_{{ update.id }}"
+  geometry_fieldname = "geometry"
+  geometry_type = "polygon"
+  id_fieldname = "id"
+  srid = 4326
+  sql = """
+    SELECT
+      ST_AsMVTGeom(ST_AsBinary(geometry::geometry), !BBOX!) AS geometry,
+      ownership,
+      cadnum,
+      purpose,
+      category,
+      id
+    FROM landuse
+    WHERE
+      koatuu IN (
+      	SELECT DISTINCT koatuu FROM landuse
+      	WHERE revision = (
+      	  SELECT id
+      	  FROM cadinfo_update
+      	  WHERE status = 'success'
+      	  ORDER BY id DESC
+      	  LIMIT 1
+      	) AND geometry && !BBOX!
+      ) AND
+      revision = {{ update.id }} AND
+      geometry && !BBOX!
+  """
+{% endfor %}
+
+  [[mvt_providers.layers]]
+  name = "polygons"
+  geometry_fieldname = "geometry"
+  geometry_type = "polygon"
+  id_fieldname = "id"
+  srid = 3857
+  sql = """
+    SELECT ST_AsMVTGeom(ST_AsBinary(geometry), !BBOX!) AS geometry, 0 AS id
+    FROM public.landuse_statistics WHERE geometry && !BBOX!
+  """
+
+  [[mvt_providers.layers]]
+  name = "centroids"
+  geometry_fieldname = "geometry"
+  geometry_type = "point"
+  id_fieldname = "id"
+  sql = """
+    SELECT ST_AsMVTGeom(ST_AsBinary(point), !BBOX!) AS geometry, to_char(parcels, '9 999 999') AS parcels, 0 AS id
+    FROM public.landuse_statistics WHERE geometry && !BBOX!
+  """
+
+[[maps]]
+name = "kadastr"
+
+  [[maps.layers]]
+  provider_layer = "mvt_kadastr.polygons"
+  min_zoom = 3
+  max_zoom = 11
+
+  [[maps.layers]]
+  provider_layer = "mvt_kadastr.land_polygons"
+  min_zoom = 11
+  max_zoom = 20
+
+  [[maps.layers]]
+  provider_layer = "mvt_kadastr.centroids"
+  min_zoom = 3
+  max_zoom = 7
+
+{% for update in updates %}
+
+[[maps]]
+name = "parcels_history_{{ update.id }}"
+
+  [[maps.layers]]
+  name = "land_polygons"
+  provider_layer = "mvt_kadastr.parcels_history_{{ update.id }}"
+  min_zoom = 11
+  max_zoom = 20
+
+  [[maps.layers]]
+  provider_layer = "mvt_kadastr.polygons"
+  min_zoom = 3
+  max_zoom = 11
+
+  [[maps.layers]]
+  provider_layer = "mvt_kadastr.centroids"
+  min_zoom = 3
+  max_zoom = 7
+
+{% endfor %}
+
+# [cache]
+#   max_zoom = 14
+#   type = "file"
+#   basepath = "cache"
