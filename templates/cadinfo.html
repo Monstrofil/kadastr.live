@@ -73,6 +73,15 @@
         </div>
 
 
+        <h2>Історичні записи</h2>
+
+        {% for foo in history %}
+            <span>{{ foo.revision.created_at }} | Оновлення №{{ foo.revision.id }}</span><br>
+            <span>Зміна або створення</span>
+            <hr>
+        {% endfor %}
+
+
     </div>
 
 </div>
