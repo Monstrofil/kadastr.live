@@ -1,0 +1,9 @@
+version: "3.5"
+services:
+  sphinx:
+    image: macbre/sphinxsearch:3.4.1
+    ports:
+    - "127.0.0.1:36307:36307" # bind to local interface only!
+    volumes:
+    - ${SPHINX_CACHE_DIR:-./data:/opt/sphinx/index/}
+    - ./sphinx/sphinx.conf:/opt/sphinx/conf/sphinx.conf
