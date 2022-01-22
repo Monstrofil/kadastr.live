@@ -166,6 +166,7 @@ export default {
       }.bind(this));
     },
     onRequestBegin: function () {
+      console.log('onRequestBegin')
       this.workingRequests += 1;
     },
     onRequestEnd: function () {

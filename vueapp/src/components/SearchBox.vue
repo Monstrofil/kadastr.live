@@ -1,0 +1,190 @@
+<template>
+  <div ref="element" class="mapboxgl-ctrl mgl-searchControl">
+    <div class="row d-flex justify-content-center align-items-center">
+      <div class="col-md-12">
+        <div class="search autocomplete">
+          <div class="form">
+            <i class="fa fa-search"></i>
+            <input type="text"
+                   class="form-control form-input"
+                   autocomplete="off"
+                   @input="onSearchChanged"
+                   v-model="searchText"
+                   placeholder="Введіть дані для пошуку...">
+            <span class="left-pan">
+              <VTooltip
+                  :offset="[0, 16]"
+              >
+                <a target="_blank" href="#" @click.prevent="downloadGeoJson">
+                  <i class="fa fa-download"></i>
+                </a>
+
+                <!-- This will be the content of the popover -->
+                <template #popper>
+                  Завантажити геометрію у вигляді GeoJson файлу.
+                  <span v-if="! downloadAvailable" class="button-error">Наблизьте мапу для завантаження</span>
+                </template>
+              </VTooltip>
+
+            </span>
+          </div>
+          <ul class="autocomplete-results" v-if="searchResults">
+            <li class="autocomplete-result" v-for="result in searchResults.results" :key="result">
+              <a class="autocomplete-link" href="#" @click="onSelectParcel(result)">
+                <div class="cadnum_result_data">{{ result.cadnum }}</div>
+                <div class="address_result_data" v-if="result.address">{{ result.address }}</div>
+                <div class="area_result_data">{{ result.area }} {{ result.unit_area }}</div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div style="height: 55px"></div>
+  </div>
+
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  name: 'SearchBox',
+  data() {
+    return {
+      searchText: null,
+      lastCall: null,
+      lastCallTimer: null,
+      searchResults: null
+    }
+  },
+  props: {
+    downloadAvailable: null
+  },
+  methods: {
+    onAdd() {
+      return this.$refs.element
+    },
+    onRemove() {
+
+    },
+    onInputEnd() {
+
+    },
+    downloadGeoJson() {
+      if (this.downloadAvailable) {
+        this.$emit('download');
+      }
+    },
+    onSelectParcel(parcelData) {
+      this.$emit('select', parcelData);
+      this.searchResults = null;
+    },
+    debounce(f, t) {
+      return function (args) {
+        let previousCall = this.lastCall;
+        this.lastCall = Date.now();
+        if (previousCall && ((this.lastCall - previousCall) <= t)) {
+          clearTimeout(this.lastCallTimer);
+        }
+        this.lastCallTimer = setTimeout(() => f(args), t);
+      }.bind(this)
+    },
+    search() {
+      return this.debounce((searchText) => {
+        axios.get(
+          `https://test.kadastr.live/search/${searchText}`
+        ).then(response => {
+          this.searchResults = response.data;
+        });
+      }, 500)
+    },
+    onSearchChanged() {
+      console.log(this.searchText)
+      this.search()(this.searchText);
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+.autocomplete-results {
+  background: white;
+  border: 1px solid #ced4da;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.autocomplete-result {
+  list-style: none;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+.autocomplete-link {
+  display: block;
+  position: relative;
+}
+
+.autocomplete-link .area_result_data {
+  right: 0;
+  top: 0;
+  position: absolute;
+}
+
+.cadnum_result_data {
+  font-weight: 600;
+}
+
+.autocomplete-result:not(:last-child) {
+  border-bottom: 1px solid #fafafa;
+}
+
+.autocomplete-result:hover {
+  background: #ecebeb;
+}
+
+.form {
+  position: relative
+}
+
+.form .fa-search {
+  position: absolute;
+  top: 13px;
+  left: 20px;
+  color: #9ca3af
+}
+
+.form span {
+  position: absolute;
+  right: 17px;
+  top: 10px;
+  padding: 2px;
+  border-left: 1px solid #d1d5db
+}
+
+.left-pan {
+  padding-left: 7px
+}
+
+.left-pan i {
+  padding-left: 10px
+}
+
+.form-input {
+  height: 40px;
+  text-indent: 33px;
+  border-radius: 0;
+  font-size: 14px;
+}
+
+.form-input:focus {
+  box-shadow: none;
+  border: none
+}
+
+.mgl-searchControl {
+  width: 100%;
+}
+</style>

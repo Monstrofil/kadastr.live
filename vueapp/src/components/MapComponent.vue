@@ -1,13 +1,25 @@
 <template>
   <div ref="map" style="height: 30vh; width: 100%">
+    <SearchBox
+        :downloadAvailable="isDownloadAvailable"
+        @select="onSelectParcel"
+        @download="onDownloadClick"
+        ref="searchBox"
+    />
   </div>
+
 </template>
 <script>
 import mapboxgl from "mapbox-gl";
+import { ref } from "vue";
 import {layerControlGrouped} from "@/layerControlGrouped";
+import SearchBox from "@/components/SearchBox";
 
 export default {
   name: 'MapComponent',
+  components: {
+    SearchBox
+  },
   props: {
     location: {
       type: Object,
@@ -26,13 +38,35 @@ export default {
       }
     }
   },
+  setup() {
+    const searchBox = ref(null);
+    return { searchBox };
+  },
   data() {
     return {
       highlightedRoads: null,
-      popup: null
+      popup: null,
+      isDownloadAvailable: null
     }
   },
   methods: {
+    onDownloadClick: function () {
+        const bounds = this.map.getBounds();
+        const url = '/export/' + bounds._sw.lat + '/' + bounds._sw.lng + '/' + bounds._ne.lat + '/' + bounds._ne.lng + '/'
+        window.open(url, '_blank');
+    },
+    onSelectParcel: function (parcel) {
+      this.map.flyTo({
+        center: [
+          parcel.location[0],
+          parcel.location[1]
+        ],
+        speed: 4,
+        screenSpeed: 4,
+        zoom: 19,
+        essential: true
+      })
+    },
     enter_point: function (e) {
         var coordinates = e.lngLat;
         var description = 'Номер: ' + e.features[0].properties.cadnum;
@@ -191,7 +225,13 @@ export default {
         ]
       }
 
-      this.map.addControl(new layerControlGrouped(config), "top-left");
+      this.isDownloadAvailable = this.map.getZoom() > 13;
+      this.map.on('zoomend', () => {
+        this.isDownloadAvailable = this.map.getZoom() > 13;
+      });
+
+      this.map.addControl(this.searchBox, "top-left");
+      this.map.addControl(new layerControlGrouped(config), "top-right");
 
       this.enableLayers.forEach((item) => {
         this.map.setLayoutProperty(item, 'visibility', 'visible')
@@ -255,11 +295,17 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style>
 
 .mapboxgl-ctrl-top-left {
-  /* avoid overlapping navbar */
-  /*top: 67px;*/
+  width: 450px;
+}
+.mapboxgl-ctrl-top-right {
+  width: 500px;
+}
+
+.mgl-layerControl {
+  width: calc(70% + 20px) !important;
 }
 
 </style>
