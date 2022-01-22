@@ -50,6 +50,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.gis',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -58,6 +59,8 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'rest_framework',
     'rest_framework_gis',
+    'django_filters',
+    'rest_framework_filters',
     'cadinfo'
 ]
 
@@ -97,26 +100,19 @@ WSGI_APPLICATION = 'cadastr.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {},
-    'primary': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },
-    'cadastre': {
+    'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'postgres',
         'HOST': 'kadastr.live',
-        'PORT': 12345,
+        'PORT': 12321,
         'USER': env('KADASTR_DB_USER'),
         'PASSWORD': env('KADASTR_DB_PASSWORD')
     },
     # ssh -R 9306:localhost:9306 root@parkingdp.online
     'sphinx': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'postgres',
         'HOST': 'localhost',
-        'PORT': 9306,
-        'USER': 'postgres',
+        'PORT': 36307,
     }
 }
 

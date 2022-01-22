@@ -1,12 +1,7 @@
-from .models import Landuse, Koatuu, SearchIndex
+from .models import SearchIndex
 
-LANDUSE_MODELS = (
-    Landuse,
-    Koatuu
-)
 
-LANDUSE_DB = 'cadastre'
-PRIMARY_DB = 'primary'
+PRIMARY_DB = 'default'
 SPHINX_DB = 'sphinx'
 
 
@@ -14,14 +9,10 @@ class DBRouter(object):
 
     def db_for_read(self, model, **hints):
         """ reading SomeModel from otherdb """
-        if model in LANDUSE_MODELS:
-            return LANDUSE_DB
-        elif model == SearchIndex:
+        if model == SearchIndex:
             return SPHINX_DB
         return PRIMARY_DB
 
     def db_for_write(self, model, **hints):
         """ writing SomeModel to otherdb """
-        if model in LANDUSE_MODELS:
-            return LANDUSE_DB
         return PRIMARY_DB

@@ -1,13 +1,13 @@
 import json
+import re
 
-from django.db import connection, connections
+from django.db import connections
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
-
+from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, View, ListView
-from prometheus_client import CollectorRegistry, generate_latest, Metric, Gauge
+from prometheus_client import generate_latest, Gauge
 
-from cadinfo.models import Landuse, Koatuu, SearchIndex
+from cadinfo.models import Landuse, Koatuu, SearchIndex, Update, Address
 
 
 class LandInfoView(TemplateView):
@@ -15,7 +15,34 @@ class LandInfoView(TemplateView):
 
     def get_context_data(self, cad_num, **kwargs):
         content = super(LandInfoView, self).get_context_data(**kwargs)
-        content['land'] = get_object_or_404(Landuse, cadnum=cad_num)
+        parcel = get_object_or_404(
+            Landuse, cadnum=cad_num,
+            revision=Update.get_latest_update().id
+        )
+
+        history = Landuse.objects.filter(
+            cadnum=cad_num,
+            koatuu=parcel.koatuu
+        ).distinct('geometry', 'cadnum', 'koatuu', 'purpose', 'ownership')
+
+        content['land'] = parcel
+        content['history'] = history
+
+        return content
+
+    def get_queryset(self):
+        pass
+
+
+class TegolaConfigView(TemplateView):
+    template_name = 'tegola.toml'
+
+    def get_context_data(self, **kwargs):
+        content = super(TegolaConfigView, self).get_context_data(**kwargs)
+
+        content['updates'] = Update.objects.filter(
+            status=Update.Status.SUCCESS
+        ).all()
 
         return content
 
@@ -59,10 +86,10 @@ class ExportGeoJsonView(View):
                 )
             from ( 
                 SELECT 
-                    ST_Transform(point, 4326) as point, 
+                    geometry as geometry, 
                     cadnum, category, purpose_code, purpose, use, area, unit_area, ownershipcode, ownership, id, address
                 FROM landuse 
-                WHERE point && ST_Transform(ST_MakeEnvelope(%s,%s,%s,%s, 4326), 3857)
+                WHERE geometry && ST_MakeEnvelope(%s,%s,%s,%s, 4326)
             ) as t;
         """
         with connections['cadastre'].cursor() as cursor:
@@ -75,27 +102,29 @@ class ExportGeoJsonView(View):
 
 class SearchView(View):
     def get(self, request, search, *args, **kwargs):
-        searchBy = request.GET.get('searchBy', 'address')
-        if searchBy == 'address':
-            results = SearchIndex.objects.raw(
-                "SELECT id FROM test1 WHERE match(%s) LIMIT 10",
-                params=(search,)
-            )
-        elif searchBy == 'usage':
-            results = SearchIndex.objects.raw(
-                "SELECT id FROM usage_index WHERE match(%s) LIMIT 10",
-                params=(search,)
-            )
-        else:
-            return HttpResponse(status_code=400)
-        landuses = Landuse.objects.filter(id__in=[r.id for r in results]).all()
+        results = SearchIndex.objects.raw(
+            "SELECT id, cadnum FROM  fulltext WHERE match(%s) LIMIT 5",
+            params=(search,)
+        )
+        landuses = Landuse.objects.filter(cadnum__in=[
+            r.cadnum for r in results
+        ], revision=Update.get_latest_update()).all()
 
         results = []
         for landuse in landuses:
-            landuse.point.transform(3857)
+            address_info = Address.objects.filter(cadnum=landuse.cadnum).first()
+            if address_info and address_info.address not in ["None", ""]:
+                address = address_info.address
+            else:
+                address = None
             results.append({
                 'id': landuse.id,
-                'value': landuse.address if searchBy == 'address' else landuse.use,
+                'cadnum': landuse.cadnum,
+                'address': address,
+                'area': landuse.area,
+                'purpose': landuse.purpose,
+                'use': landuse.use,
+                'unit_area': landuse.unit_area,
                 'location': [landuse.point.x, landuse.point.y]
             })
 

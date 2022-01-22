@@ -3,9 +3,11 @@ from django.core.paginator import Paginator
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework_filters.backends import ComplexFilterBackend
 from rest_framework_gis.serializers import GeoModelSerializer
+import rest_framework_filters as filters
 
-from cadinfo.models import Landuse
+from cadinfo.models import Landuse, Update
 
 
 class NoCountPaginationClass(Paginator):
@@ -16,6 +18,7 @@ class NoCountPaginationClass(Paginator):
 
 class ParcelPagination(PageNumberPagination):
     max_page_size = 1000
+    page_size_query_param = 'page_size'
 
     django_paginator_class = NoCountPaginationClass
 
@@ -31,11 +34,32 @@ class ParcelPagination(PageNumberPagination):
 class ParcelSerializer(GeoModelSerializer):
     class Meta:
         model = Landuse
-        fields = ['id', 'cadnum', 'geometry', 'created_at', 'deleted_at']
+        fields = [
+            'id',
+            'cadnum',
+            'geometry',
+            'purpose_code',
+            'purpose',
+        ]
+
+
+class ManagerFilter(filters.FilterSet):
+    class Meta:
+        model = Landuse
+        fields = {
+            'cadnum': ['exact', 'in', 'startswith'],
+            'purpose': ['contains']
+        }
 
 
 class ParcelView(viewsets.ReadOnlyModelViewSet):
-    queryset = Landuse.objects.filter(deleted_at__isnull=True).order_by('id')
+    queryset = Landuse.objects.filter(
+        revision=Update.get_latest_update().id
+    ).order_by('id')
 
     serializer_class = ParcelSerializer
     pagination_class = ParcelPagination
+
+    filter_backends = [ComplexFilterBackend]
+    filter_class = ManagerFilter
+

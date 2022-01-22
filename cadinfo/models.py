@@ -4,8 +4,47 @@ from django.urls import reverse
 import hashlib
 
 
+class Update(models.Model):
+
+    @classmethod
+    def get_latest_update(cls):
+        return cls.objects.order_by('-id').first()
+
+    class Status:
+        IN_PROGRESS = 'in_progress'
+        SUCCESS = 'success'
+        ERROR = 'error'
+
+    status = models.CharField(max_length=30, choices=[
+        [Status.IN_PROGRESS, Status.IN_PROGRESS],
+        [Status.SUCCESS, Status.SUCCESS],
+        [Status.ERROR, Status.ERROR]
+    ])
+
+    latest_koatuu = models.CharField(default=None, null=True, max_length=30)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Address(models.Model):
+    cadnum = models.CharField(max_length=25)
+
+    address = models.TextField()
+
+
 class Landuse(models.Model):
-    cadnum = models.TextField()
+    OWNERSHIP_TO_NAME = {
+        'Комунальна власність': 200,
+        'Державна власність': 300,
+        'Приватна власність': 100,
+        'Не визначено': 0,
+    }
+
+    NAME_TO_OWNERSHIP = {
+        v: k for k, v in OWNERSHIP_TO_NAME.items()
+    }
+
+    cadnum = models.CharField(max_length=25)
     category = models.TextField()
     area = models.TextField()
     unit_area = models.TextField()
@@ -14,33 +53,14 @@ class Landuse(models.Model):
     purpose = models.TextField()
     purpose_code = models.TextField()
     ownership = models.TextField()
-    ownershipcode = models.TextField()
-    address = models.TextField()
+    ownershipcode = models.CharField(max_length=10)
 
-    created_at = models.BigIntegerField()
-    deleted_at = models.BigIntegerField()
+    revision = models.ForeignKey(Update, on_delete=models.CASCADE, db_column='revision')
 
     point = gis.PointField(null=True)
     bbox = gis.GeometryField(null=True)
 
     geometry = gis.GeometryField()
-
-    hash = models.CharField(max_length=255, default='')
-
-    def get_hash(self):
-        return hashlib.md5(
-            ';'.join([
-                str(self.cadnum),
-                str(self.area),
-                str(self.unit_area),
-                str(self.koatuu),
-                str(self.use),
-                str(self.purpose),
-                str(self.purpose_code),
-                str(self.ownership),
-                str(self.address),
-            ]).encode()
-        ).hexdigest()
 
     def get_absolute_url(self):
         return reverse('cad_info', kwargs=dict(cad_num=self.cadnum))
@@ -62,6 +82,7 @@ class Koatuu(models.Model):
 
 class SearchIndex(models.Model):
     id = models.TextField(primary_key=True)
+    cadnum = models.TextField()
 
     class Meta:
         managed = False
