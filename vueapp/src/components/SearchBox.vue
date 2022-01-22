@@ -33,6 +33,7 @@
               <a class="autocomplete-link" href="#" @click="onSelectParcel(result)">
                 <div class="cadnum_result_data">{{ result.cadnum }}</div>
                 <div class="address_result_data" v-if="result.address">{{ result.address }}</div>
+                <div class="use_result_data" v-if="result.use">{{ result.use }}</div>
                 <div class="area_result_data">{{ result.area }} {{ result.unit_area }}</div>
               </a>
             </li>
@@ -93,7 +94,7 @@ export default {
     search() {
       return this.debounce((searchText) => {
         axios.get(
-          `https://test.kadastr.live/search/${searchText}`
+          `/search/${searchText}`
         ).then(response => {
           this.searchResults = response.data;
         });
@@ -184,7 +185,4 @@ export default {
   border: none
 }
 
-.mgl-searchControl {
-  width: 100%;
-}
 </style>

@@ -30,7 +30,7 @@
     },
     "orto-tiles": {
       "type": "raster",
-      "tiles": ["https://test.kadastr.live/map/rtile/carto_2240035321813140995/ua/{z}/{x}/{y}.png"],
+      "tiles": ["/map/rtile/carto_2240035321813140995/ua/{z}/{x}/{y}.png"],
       "tileSize": 256,
       "attribution": "DZK",
       "maxzoom": 19
@@ -111,26 +111,6 @@
           "rgba(0, 0, 0, 1)",
           "rgba(0, 0, 0, 1)"
         ]
-      }
-    },
-    {
-      "id": "kadcenter_address",
-      "type": "circle",
-      "source": "cadastr",
-      "source-layer": "points",
-      "layout": {"visibility": "visible"},
-      "paint": {
-        "circle-radius": {"stops": [[1, 3], [14, 3], [16, 4]]},
-        "circle-blur": 0,
-        "circle-color": [
-          "case",
-          ["==", ["get", "address"], ""],
-          "rgba(246, 250, 2, 1)",
-          "rgba(2, 250, 135, 1)"
-        ],
-        "circle-stroke-color": "rgba(0, 0, 0, 0.3)",
-        "circle-opacity": 1,
-        "circle-stroke-width": 1
       }
     },
     {

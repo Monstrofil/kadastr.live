@@ -232,6 +232,7 @@ export default {
 
       this.map.addControl(this.searchBox, "top-left");
       this.map.addControl(new layerControlGrouped(config), "top-right");
+      this.map.addControl(new mapboxgl.NavigationControl(), "bottom-right");
 
       this.enableLayers.forEach((item) => {
         this.map.setLayoutProperty(item, 'visibility', 'visible')
@@ -298,14 +299,50 @@ export default {
 <style>
 
 .mapboxgl-ctrl-top-left {
-  width: 450px;
+  width: 100%;
 }
+
+.mapboxgl-ctrl-top-left .mapboxgl-ctrl {
+  margin: 0;
+  border-color: transparent;
+}
+
+  .mgl-searchControl {
+    width: 100%;
+  }
+
+@media (min-width: 550px) {
+  .mapboxgl-ctrl-top-left {
+    width: 450px;
+  }
+  .mapboxgl-ctrl-top-left .mapboxgl-ctrl {
+    margin: 10px 10px 0 10px;
+  }
+}
+
 .mapboxgl-ctrl-top-right {
-  width: 500px;
+    display: none;
+}
+
+@media (min-width: 650px) {
+  .mapboxgl-ctrl-top-right {
+    display: block;
+  }
+}
+@media (min-width: 750px) {
+  .mapboxgl-ctrl-top-right {
+    width: 300px;
+  }
+}
+@media (min-width: 1250px) {
+  .mapboxgl-ctrl-top-right {
+    width: 500px;
+  }
 }
 
 .mgl-layerControl {
   width: calc(70% + 20px) !important;
 }
+
 
 </style>

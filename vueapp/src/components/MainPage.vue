@@ -3,7 +3,7 @@
   <div class="col-md-6">
   </div>
   <MapComponent
-      :mapStyle="'https://test.kadastr.live/static/vector_style.json'"
+      :mapStyle="'/style/vector_style.json'"
       style="width: 100%; height: 100vh"
   >
 
