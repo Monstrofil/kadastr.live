@@ -16,12 +16,14 @@ import VTooltipPlugin from 'v-tooltip';
 import 'v-tooltip/dist/v-tooltip.css';
 import "mapbox-layer-control/layerControl.css";
 import MainPage from "@/components/MainPage";
+import ParcelInfoPage from "@/components/ParcelInfoPage";
 
 // 2. Define some routes
 // Each route should map to a component.
 // We'll talk about nested routes later.
 const routes = [
   { name: 'main', path: '', component: MainPage },
+  { name: 'parcel', path: '/parcel/:pk?', component: ParcelInfoPage },
   { name: 'about', path: '/about', component: AboutPageComponent },
 ]
 

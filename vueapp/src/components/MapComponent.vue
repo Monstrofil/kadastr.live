@@ -44,7 +44,7 @@ export default {
   },
   data() {
     return {
-      highlightedRoads: null,
+      highlightedParcels: null,
       popup: null,
       isDownloadAvailable: null
     }
@@ -238,43 +238,38 @@ export default {
         this.map.setLayoutProperty(item, 'visibility', 'visible')
       })
 
-      this.map.on('click', 'land_polygones', (e) => {
+      this.map.on('mouseup', 'land_polygones', (e) => {
         const feature = e.features[0];
-        console.log(feature)
-
-        // hack to save map location in history
-        // this.$router.replace({hash: window.location.hash}).finally(() => {
-        //   this.$router.push({
-        //     name: 'road_info',
-        //     params: {pk: feature.id}
-        //   })
-        // });
+        const url = this.$router.resolve({
+          name: 'parcel', params: { pk: feature.properties.cadnum }
+        })
+        window.open(url.href, '_blank');
       });
 
       this.map.on('mouseleave', 'land_polygones', () => {
         this.leave_point();
         this.$emit('unselected');
         this.map.getCanvas().style.cursor = 'auto';
-        if (this.highlightedRoads) {
-          this.highlightedRoads.forEach((featureId) => {
+        if (this.highlightedParcels) {
+          this.highlightedParcels.forEach((featureId) => {
             this.map.setFeatureState(
                 {source: 'cadastr', id: featureId, sourceLayer: 'land_polygons'},
                 {hover: false}
             );
           })
         }
-        this.highlightedRoads = [];
+        this.highlightedParcels = [];
       });
-      // this.map.on('mouseenter', 'land_polygones', (e) => {
-      //   this.enter_point(e);
-      // })
+      this.map.on('touchend', 'land_polygones', (e) => {
+        this.enter_point(e);
+      })
       this.map.on('mousemove', 'land_polygones', (e) => {
         this.enter_point(e);
         // Change the cursor style as a UI indicator.
         this.map.getCanvas().style.cursor = 'pointer';
 
-        if (this.highlightedRoads) {
-          this.highlightedRoads.forEach((featureId) => {
+        if (this.highlightedParcels) {
+          this.highlightedParcels.forEach((featureId) => {
             this.map.setFeatureState(
                 {source: 'cadastr', id: featureId, sourceLayer: 'land_polygons'},
                 {hover: false}
@@ -282,13 +277,13 @@ export default {
           })
         }
 
-        this.highlightedRoads = [];
+        this.highlightedParcels = [];
         e.features.forEach((feature) => {
           this.map.setFeatureState(
               {source: 'cadastr', id: feature.id, sourceLayer: 'land_polygons'},
               {hover: true}
           );
-          this.highlightedRoads.push(feature.id)
+          this.highlightedParcels.push(feature.id)
         })
         this.$emit('selected', e.features);
       });

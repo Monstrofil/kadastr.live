@@ -1,7 +1,5 @@
 <template>
 
-  <div class="col-md-6">
-  </div>
   <MapComponent
       :mapStyle="'/style/vector_style.json'"
       style="width: 100%; height: 100vh"
