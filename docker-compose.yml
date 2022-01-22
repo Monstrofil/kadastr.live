@@ -7,3 +7,16 @@ services:
     volumes:
     - ${SPHINX_CACHE_DIR:-./data:/opt/sphinx/index/}
     - ./sphinx/sphinx.conf:/opt/sphinx/conf/sphinx.conf
+    - ./sphinx/sphinx_template.conf:/opt/sphinx/conf/sphinx_template.conf
+    environment:
+      - SQL_HOST
+      - SQL_USER
+      - SQL_PASS
+      - SQL_DB
+      - SQL_PORT
+
+  nginx:
+    build: vueapp
+    restart: unless-stopped
+    ports:
+    - 8882:80
