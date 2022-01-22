@@ -1,5 +1,5 @@
 from django.contrib.sitemaps import Sitemap
-from .models import Landuse
+from .models import Landuse, Update
 
 
 class LanduseSitemap(Sitemap):
@@ -9,7 +9,9 @@ class LanduseSitemap(Sitemap):
     protocol = 'https'
 
     def items(self):
-        return Landuse.objects.order_by('cadnum').all()
+        return Landuse.objects.filter(
+            revision=Update.get_latest_update()
+        ).all()
 
-    def lastmod(self, obj):
-        return None
+    def lastmod(self, obj: Landuse):
+        return obj.revision.created_at

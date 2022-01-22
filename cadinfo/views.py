@@ -50,28 +50,6 @@ class TegolaConfigView(TemplateView):
         pass
 
 
-class LandListView(ListView):
-    paginate_by = 100
-    model = Landuse
-    ordering = 'cadnum'
-    template_name = 'list.html'
-
-    def get_queryset(self):
-        return super(LandListView, self).get_queryset()
-
-
-class KoatuuInfoView(TemplateView):
-    template_name = 'koatuu.html'
-
-    def get_context_data(self, koatuu_id, **kwargs):
-        content = super(KoatuuInfoView, self).get_context_data(**kwargs)
-        content['koatuu'] = get_object_or_404(Koatuu, koatuu_id=koatuu_id)
-
-        content['lands'] = Landuse.objects.filter(koatuu=str(koatuu_id))
-
-        return content
-
-
 class ExportGeoJsonView(View):
     def get(self, request, left, bottom, right, top, *args, **kwargs):
         left = float(left)
@@ -89,7 +67,13 @@ class ExportGeoJsonView(View):
                     geometry as geometry, 
                     cadnum, category, purpose_code, purpose, use, area, unit_area, ownershipcode, ownership, id, address
                 FROM landuse 
-                WHERE geometry && ST_MakeEnvelope(%s,%s,%s,%s, 4326)
+                WHERE revision = (
+                    SELECT id
+                    FROM cadinfo_update
+                    WHERE status = 'success'
+                    ORDER BY id DESC
+                    LIMIT 1
+                ) AND geometry && ST_MakeEnvelope(%s,%s,%s,%s, 4326)
             ) as t;
         """
         with connections['cadastre'].cursor() as cursor:
