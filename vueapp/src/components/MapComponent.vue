@@ -67,6 +67,29 @@ export default {
         essential: true
       })
     },
+    highlightParcels(e) {
+      this.enter_point(e);
+      // Change the cursor style as a UI indicator.
+      this.map.getCanvas().style.cursor = 'pointer';
+
+      if (this.highlightedParcels) {
+        this.highlightedParcels.forEach((featureId) => {
+          this.map.setFeatureState(
+              {source: 'cadastr', id: featureId, sourceLayer: 'land_polygons'},
+              {hover: false}
+          );
+        })
+      }
+
+      this.highlightedParcels = [];
+      e.features.forEach((feature) => {
+        this.map.setFeatureState(
+            {source: 'cadastr', id: feature.id, sourceLayer: 'land_polygons'},
+            {hover: true}
+        );
+        this.highlightedParcels.push(feature.id)
+      })
+    },
     enter_point: function (e) {
         var coordinates = e.lngLat;
         var description = 'Номер: ' + e.features[0].properties.cadnum;
@@ -81,6 +104,12 @@ export default {
         }
         if (e.features[0].properties.ownership) {
             description += '<br>Власність: ' + e.features[0].properties.ownership;
+        }
+
+        if (e.type === 'touchend') {
+          description += '<br><a target="_blank" href="/parcel/' + e.features[0].properties.cadnum + '">' +
+              '<button type="button" class="btn btn-sm btn-light">Детальніше</button>' +
+              '</a>';
         }
 
         // Populate the popup and set its coordinates
@@ -261,30 +290,11 @@ export default {
         this.highlightedParcels = [];
       });
       this.map.on('touchend', 'land_polygones', (e) => {
-        this.enter_point(e);
+        this.highlightParcels(e);
+        e.originalEvent.preventDefault()
       })
       this.map.on('mousemove', 'land_polygones', (e) => {
-        this.enter_point(e);
-        // Change the cursor style as a UI indicator.
-        this.map.getCanvas().style.cursor = 'pointer';
-
-        if (this.highlightedParcels) {
-          this.highlightedParcels.forEach((featureId) => {
-            this.map.setFeatureState(
-                {source: 'cadastr', id: featureId, sourceLayer: 'land_polygons'},
-                {hover: false}
-            );
-          })
-        }
-
-        this.highlightedParcels = [];
-        e.features.forEach((feature) => {
-          this.map.setFeatureState(
-              {source: 'cadastr', id: feature.id, sourceLayer: 'land_polygons'},
-              {hover: true}
-          );
-          this.highlightedParcels.push(feature.id)
-        })
+        this.highlightParcels(e);
         this.$emit('selected', e.features);
       });
     });
