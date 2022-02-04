@@ -7,8 +7,11 @@ import hashlib
 class Update(models.Model):
 
     @classmethod
-    def get_latest_update(cls):
-        return cls.objects.order_by('-id').first()
+    def get_latest_update(cls, success=True):
+        objects = cls.objects
+        if success:
+            objects = objects.filter(status=Update.Status.SUCCESS)
+        return objects.order_by('-id').first()
 
     class Status:
         IN_PROGRESS = 'in_progress'

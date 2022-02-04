@@ -23,10 +23,12 @@ class LandInfoView(TemplateView):
         history = Landuse.objects.filter(
             cadnum=cad_num,
             koatuu=parcel.koatuu
-        ).distinct('geometry', 'cadnum', 'koatuu', 'purpose', 'ownership')
+        ).distinct('geometry', 'cadnum', 'koatuu', 'purpose', 'ownership', 'use')
+
+        all_parcels = list(history)
 
         content['land'] = parcel
-        content['history'] = history
+        content['history'] = list( zip(all_parcels, [None, *all_parcels[:-1]]))
 
         return content
 
@@ -65,8 +67,9 @@ class ExportGeoJsonView(View):
             from ( 
                 SELECT 
                     geometry as geometry, 
-                    cadnum, category, purpose_code, purpose, use, area, unit_area, ownershipcode, ownership, id, address
+                    landuse.cadnum, category, purpose_code, purpose, use, area, unit_area, ownershipcode, ownership, landuse.id, address
                 FROM landuse 
+                LEFT JOIN cadinfo_address ON landuse.cadnum = cadinfo_address.cadnum
                 WHERE revision = (
                     SELECT id
                     FROM cadinfo_update
@@ -76,7 +79,7 @@ class ExportGeoJsonView(View):
                 ) AND geometry && ST_MakeEnvelope(%s,%s,%s,%s, 4326)
             ) as t;
         """
-        with connections['cadastre'].cursor() as cursor:
+        with connections['default'].cursor() as cursor:
             cursor.execute(sql, [bottom, left, top, right])
             row = cursor.fetchone()
         response = HttpResponse(json.dumps(row[0]), content_type="application/json")
@@ -87,7 +90,7 @@ class ExportGeoJsonView(View):
 class SearchView(View):
     def get(self, request, search, *args, **kwargs):
         results = SearchIndex.objects.raw(
-            "SELECT id, cadnum FROM  fulltext WHERE match(%s) LIMIT 5",
+            "SELECT id, cadnum FROM  fulltext WHERE match(%s) LIMIT 10",
             params=(search,)
         )
         landuses = Landuse.objects.filter(cadnum__in=[
