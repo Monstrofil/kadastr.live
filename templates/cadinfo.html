@@ -1,3 +1,4 @@
+{% load l10n %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -15,21 +16,18 @@
     <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/pure-min.css">
 
     <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static "favicon/apple-touch-icon.png" %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static "favicon/favicon-32x32.png" %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static "favicon/favicon-16x16.png" %}">
-    <link rel="manifest" href="{% static "favicon/site.webmanifest" %}">
-    <link rel="mask-icon" href="{% static "favicon/safari-pinned-tab.svg" color="#5bbad5" %}">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
-    <link rel="stylesheet" href="{% static "style.css" %}">
 
     <style>
-        #mapid { height: 350px; width: 350px }
+        #mapid {
+            height: 350px;
+            width: 350px
+        }
     </style>
 </head>
 <body>
-<div class="content">
+<div class="content" style="margin: 30px">
 
     <h1>Інформація про земельну ділянку №{{ land.cadnum }}</h1>
 
@@ -37,59 +35,104 @@
         <div style="display: inline-block; vertical-align: top;">
             <table class="pure-table pure-table-horizontal">
                 <tbody>
-                    <tr>
-                        <td>Кадастровий номер</td>
-                        <td>{{ land.cadnum }}</td>
-                    </tr>
-                    <tr>
-                        <td>площа</td>
-                        <td>{{ land.area }} {{ land.unit_area }}</td>
-                    </tr>
-                    <tr>
-                        <td>власність</td>
-                        <td>{{ land.ownership|default:"немає даних" }}</td>
-                    </tr>
-                    <tr>
-                        <td>використання</td>
-                        <td>{{ land.use|default:"немає даних" }}</td>
-                    </tr>
-                    <tr>
-                        <td>призначення</td>
-                        <td>{{ land.purpose|default:"немає даних" }}</td>
-                    </tr>
-                    <tr>
-                        <td>категорія</td>
-                        <td>{{ land.category|default:"немає даних" }}</td>
-                    </tr>
-                    <tr>
-                        <td>адреса</td>
-                        <td>{{ land.address|default:"немає даних" }}</td>
-                    </tr>
+                <tr>
+                    <td>Кадастровий номер</td>
+                    <td>{{ land.cadnum }}</td>
+                </tr>
+                <tr>
+                    <td>площа</td>
+                    <td>{{ land.area }} {{ land.unit_area }}</td>
+                </tr>
+                <tr>
+                    <td>власність</td>
+                    <td>{{ land.ownership|default:"немає даних" }}</td>
+                </tr>
+                <tr>
+                    <td>використання</td>
+                    <td>{{ land.use|default:"немає даних" }}</td>
+                </tr>
+                <tr>
+                    <td>призначення</td>
+                    <td>{{ land.purpose|default:"немає даних" }}</td>
+                </tr>
+                <tr>
+                    <td>категорія</td>
+                    <td>{{ land.category|default:"немає даних" }}</td>
+                </tr>
+                <tr>
+                    <td>адреса</td>
+                    <td>{{ land.address|default:"немає даних" }}</td>
+                </tr>
                 </tbody>
             </table>
         </div>
         <div style="display: inline-block;">
             <div id="mapid"></div>
         </div>
+    </div>
 
+    <div>
+        <h2>Історія</h2>
+        <p>Відображаються зміни у інформації про земельну ділянку.</p>
 
-        <h2>Історичні записи</h2>
+        {% for parcel in history %}
+            <span>{{ forloop.counter }}. Оновлення даних {{ parcel.0.revision.created_at }}.</span><br>
+            {% if parcel.1.cadnum %}
 
-        {% for foo in history %}
-            <span>{{ foo.revision.created_at }} | Оновлення №{{ foo.revision.id }}</span><br>
-            <span>Зміна або створення</span>
+                <span>Зміна інформації</span>
+                <table class="pure-table pure-table-horizontal">
+                    <thead>
+                        <tr>
+                        <td>До {{ parcel.0.revision.created_at }}</td>
+                        <td>Після {{ parcel.1.revision.created_at }}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% if parcel.0.purpose != parcel.1.purpose %}
+                    <tr>
+                        <td style="background-color: #ffe7e7">{{ parcel.0.purpose }}</td>
+                        <td style="background-color: #d2ffd2">{{ parcel.1.purpose }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if parcel.0.ownership != parcel.1.ownership %}
+                    <tr>
+                        <td style="background-color: #ffe7e7">{{ parcel.0.ownership }}</td>
+                        <td style="background-color: #d2ffd2">{{ parcel.1.ownership }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if parcel.0.use != parcel.1.use %}
+                    <tr>
+                        <td style="background-color: #ffe7e7">{{ parcel.0.use }}</td>
+                        <td style="background-color: #d2ffd2">{{ parcel.1.use }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if parcel.0.geometry != parcel.1.geometry %}
+                    <tr>
+                        <td style="background-color: #ffe7e7">{{ parcel.0.geometry.json }}</td>
+                        <td style="background-color: #d2ffd2">{{ parcel.1.geometry.json }}</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+
+                </table>
+            {% else %}
+                <span>Інформацію додано до бази для відстеження</span>
+            {% endif %}
+
             <hr>
         {% endfor %}
-
-
     </div>
 
 </div>
 
 
-
 <script>
+    {% localize off %}
     var point = new L.Point({{land.point.x}}, {{land.point.y}});
+    {% endlocalize  %}
     var map = L.map('mapid').setView([point.y, point.x], 16);
 
 
