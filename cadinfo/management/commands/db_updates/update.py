@@ -54,6 +54,7 @@ class Koatuu:
     unique_id: str
     level: int
     parent: int
+    pre_parent: int
 
     def __lt__(self, other):
         return self.unique_id < other.unique_id
@@ -65,7 +66,7 @@ class Koatuu:
 class InsertTask:
     koatuu: Koatuu
     raw_parcels: Dict
-    revision: int
+    revision: Update
 
 
 def download_koatuu(revision):
@@ -105,7 +106,7 @@ def insert_into_db():
         update_db(task)
         logging.info('Insert for %s succeeded', task.koatuu.unique_id)
         Update.objects.filter(
-            id=task.revision
+            id=task.revision.id
         ).update(
             latest_koatuu=task.koatuu.unique_id
         )
@@ -144,10 +145,10 @@ def get_token():
 
 def get_koatuu(info) -> Koatuu:
     r = [
-        [info['Перший рівень'], info["Категорія"], info["Назва об'єкта українською мовою"], None],
-        [info['Другий рівень'], info["Категорія"], info["Назва об'єкта українською мовою"], info['Перший рівень']],
-        [info['Третій рівень'], info["Категорія"], info["Назва об'єкта українською мовою"], info['Другий рівень']],
-        [info['Четвертий рівень'], info["Категорія"], info["Назва об'єкта українською мовою"], info['Третій рівень']],
+        [info['Перший рівень'], info["Категорія"], info["Назва об'єкта українською мовою"], None, None],
+        [info['Другий рівень'], info["Категорія"], info["Назва об'єкта українською мовою"], info['Перший рівень'], None],
+        [info['Третій рівень'], info["Категорія"], info["Назва об'єкта українською мовою"], info['Другий рівень'], info['Перший рівень']],
+        [info['Четвертий рівень'], info["Категорія"], info["Назва об'єкта українською мовою"], info['Третій рівень'], info['Другий рівень']],
     ]
     r.reverse()
     level, item = next((
@@ -158,6 +159,7 @@ def get_koatuu(info) -> Koatuu:
         name=item[2],
         unique_id=str(item[0]),
         parent=item[3],
+        pre_parent=item[4],
         level=4 - level
     )
 
@@ -203,7 +205,7 @@ def update_db(task: InsertTask):
             ownership=parcel['ownership'],
             point=point_geom,
             bbox=GEOSGeometry(parcel['zoom_to'], srid=3857) if parcel['ppoint'] else None,
-            koatuu=task.koatuu.unique_id,
+            koatuu=task.koatuu.unique_id if task.koatuu.level <= 2 else (task.koatuu.parent if task.koatuu.level == 3 else task.koatuu.pre_parent),
             geometry=GEOSGeometry(parcel['geom'], srid=4326) if parcel['geom'] else None,
             revision=task.revision
         )
@@ -360,9 +362,9 @@ def _download_and_insert(latest_update, koatuu_list):
 
     # start multiple threads that will download parcels
     t1 = threading.Thread(target=partial(
-        download_koatuu, revision=latest_update.id), daemon=True)
+        download_koatuu, revision=latest_update), daemon=True)
     t2 = threading.Thread(target=partial(
-        download_koatuu, revision=latest_update.id), daemon=True)
+        download_koatuu, revision=latest_update), daemon=True)
 
     t1.start()
     t2.start()
