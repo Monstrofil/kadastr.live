@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 from pathlib import Path
+from django.utils.translation import gettext_lazy as _
 import pymysql
 import environ
 env = environ.Env()
@@ -141,7 +142,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'uk'
+
+LANGUAGES = [
+    ('uk', _('Ukrainian'))
+]
 
 TIME_ZONE = 'UTC'
 
