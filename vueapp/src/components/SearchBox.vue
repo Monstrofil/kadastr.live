@@ -1,9 +1,12 @@
 <template>
-  <div ref="element" class="mapboxgl-ctrl mgl-searchControl">
+  <div id="searchBox"
+       ref="element"
+       class="mapboxgl-ctrl mgl-searchControl"
+       @focusout="onSearchEnded">
     <div class="row d-flex justify-content-center align-items-center">
       <div class="col-md-12">
         <div class="search autocomplete">
-          <div class="form">
+          <div class="form" >
             <i class="fa fa-search"></i>
             <input type="text"
                    class="form-control form-input"
@@ -32,8 +35,8 @@
             <li class="autocomplete-result" v-for="result in searchResults.results" :key="result">
               <a class="autocomplete-link" href="#" @click="onSelectParcel(result)">
                 <div class="cadnum_result_data">{{ result.cadnum }}</div>
-                <div class="address_result_data" v-if="result.address">{{ result.address }}</div>
-                <div class="use_result_data" v-if="result.use">{{ result.use }}</div>
+                <div class="address_result_data"><b>Адреса: </b>{{ result.address ? result.address: 'Дані відсутні' }}</div>
+<!--                <div class="use_result_data" v-if="result.use"><b>Використання: </b>{{ result.use }}</div>-->
                 <div class="area_result_data">{{ result.area }} {{ result.unit_area }}</div>
               </a>
             </li>
@@ -101,8 +104,13 @@ export default {
       }, 500)
     },
     onSearchChanged() {
-      console.log(this.searchText)
       this.search()(this.searchText);
+    },
+    onSearchEnded(e) {
+      if (e.relatedTarget && e.relatedTarget.className !== "mapboxgl-canvas") {
+          return;
+      }
+      this.searchResults = null;
     }
   }
 }
@@ -115,6 +123,7 @@ export default {
   border: 1px solid #ced4da;
   padding-left: 15px;
   padding-right: 15px;
+  max-width: 95%;
 }
 
 .autocomplete-result {

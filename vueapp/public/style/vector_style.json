@@ -108,8 +108,8 @@
         "fill-outline-color": [
           "case",
           ["boolean", ["==", ["get", "address"], null], false],
-          "rgba(0, 0, 0, 1)",
-          "rgba(0, 0, 0, 1)"
+          "rgba(0, 0, 0, 0.6)",
+          "rgba(0, 0, 0, 0.6)"
         ]
       }
     },

@@ -512,6 +512,7 @@ function lcCreateLayerToggle(map, layer, checked, sources) {
     }
 
     let directory = lcCreateDicrectory("Фільтри", '-');
+    directory.style = 'margin-left: 0;'
 
     // CREATE INDIVIDUAL FILTER TOGGLES
     for (const [key, value] of Object.entries(layer.metadata.filterSchema)) {
@@ -665,6 +666,27 @@ function lcCreateButton(collapsed) {
   div.dataset.layerControl = "true"
   div.className = 'mapboxgl-ctrl mapboxgl-ctrl-group mgl-layerControl';
   if (collapsed) div.classList.add("collapsed");
+
+  let breadcrumb = document.createElement('div');
+  breadcrumb.style = "text-align: center;\n" +
+      "    background: white;\n" +
+      "    border: 1px solid rgb(0 0 0 / 10%);\n" +
+      "    border-right: 0;";
+  breadcrumb.className = 'mgl-breadcrumb';
+  breadcrumb.innerHTML = '<i style="font-size: 30px;\n' +
+      '    line-height: 50px;" class="fa fa-map-o"></i>';
+
+  const collapsedStyle = 'hiddenRight';
+  breadcrumb.addEventListener('click', function () {
+    if(div.classList.contains(collapsedStyle)) {
+      div.classList.remove(collapsedStyle)
+    }
+    else {
+      div.classList.add(collapsedStyle)
+    }
+  })
+  div.classList.add(collapsedStyle)
+  div.appendChild(breadcrumb)
 
   return div
 }

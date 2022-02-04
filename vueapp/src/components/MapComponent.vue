@@ -46,7 +46,9 @@ export default {
     return {
       highlightedParcels: null,
       popup: null,
-      isDownloadAvailable: null
+      isDownloadAvailable: null,
+      ignoreClick: null,
+      touchInsideParcel: null
     }
   },
   methods: {
@@ -107,8 +109,8 @@ export default {
         }
 
         if (e.type === 'touchend') {
-          description += '<br><a target="_blank" href="/parcel/' + e.features[0].properties.cadnum + '">' +
-              '<button type="button" class="btn btn-sm btn-light">Детальніше</button>' +
+          description += '<br><a class="btn btn-light" role="button" target="_blank" href="/parcel/' + e.features[0].properties.cadnum + '">' +
+              'Детальніше' +
               '</a>';
         }
 
@@ -133,8 +135,9 @@ export default {
     this.map.on('load', () => {
       // Create a popup, but don't add it to the map yet.
       this.popup = new mapboxgl.Popup({
-          closeButton: false,
-          closeOnClick: false
+          closeButton: true,
+          closeOnClick: false,
+          focusAfterOpen: true
       });
 
       var config = {
@@ -267,7 +270,15 @@ export default {
         this.map.setLayoutProperty(item, 'visibility', 'visible')
       })
 
-      this.map.on('mouseup', 'land_polygones', (e) => {
+      this.map.on('touchstart', () => {
+        this.ignoreClick = true;
+      });
+
+      this.map.on('click', 'land_polygones', (e) => {
+        if(this.ignoreClick) {
+          return
+        }
+
         const feature = e.features[0];
         const url = this.$router.resolve({
           name: 'parcel', params: { pk: feature.properties.cadnum }
@@ -276,6 +287,9 @@ export default {
       });
 
       this.map.on('mouseleave', 'land_polygones', () => {
+        if(this.ignoreClick) {
+          return
+        }
         this.leave_point();
         this.$emit('unselected');
         this.map.getCanvas().style.cursor = 'auto';
@@ -290,10 +304,24 @@ export default {
         this.highlightedParcels = [];
       });
       this.map.on('touchend', 'land_polygones', (e) => {
-        this.highlightParcels(e);
-        e.originalEvent.preventDefault()
+        this.touchInsideParcel = true;
+        if(this.ignoreClick) {
+          this.highlightParcels(e);
+        }
+      })
+      this.map.on('touchend', () => {
+        if(this.touchInsideParcel){
+          this.touchInsideParcel = false;
+          return;
+        }
+        if(this.ignoreClick) {
+          this.leave_point()
+        }
       })
       this.map.on('mousemove', 'land_polygones', (e) => {
+        if(this.ignoreClick) {
+          return
+        }
         this.highlightParcels(e);
         this.$emit('selected', e.features);
       });
@@ -325,28 +353,93 @@ export default {
   }
 }
 
-.mapboxgl-ctrl-top-right {
-    display: none;
-}
+  .mapboxgl-ctrl-top-right {
+    /*width: 500px;*/
+  }
 
 @media (min-width: 650px) {
   .mapboxgl-ctrl-top-right {
     display: block;
   }
 }
+
+@media (max-width: 500px) {
+  .mgl-layerControl {
+    margin: 45px 10px 0 0 !important;
+    width: 300px;
+  }
+
+  .mgl-layerControl.hiddenRight {
+    margin-right: calc(-100% + 50px) !important;
+    width: 100%;
+  }
+}
+
+@media (min-width: 650px) {
+  .mgl-layerControl {
+    width: 400px !important;
+  }
+
+  .mgl-layerControl.hiddenRight {
+    margin-right: calc(-100% + 50px) !important;
+    width: 100%;
+  }
+}
+@media (max-width: 1000px) {
+  .mgl-layerControl {
+    margin: 65px 10px 0 0 !important;
+    width: 300px;
+  }
+
+  .mgl-layerControl.hiddenRight {
+    margin-right: calc(-100% + 50px) !important;
+    width: 100%;
+  }
+
+  .mapboxgl-ctrl-zoom-in, .mapboxgl-ctrl-zoom-out, .mapboxgl-ctrl-compass {
+    display: none !important;
+  }
+}
+
 @media (min-width: 750px) {
   .mapboxgl-ctrl-top-right {
-    width: 300px;
+    /*width: 300px;*/
   }
 }
 @media (min-width: 1250px) {
   .mapboxgl-ctrl-top-right {
-    width: 500px;
+    /*width: 500px;*/
   }
 }
 
 .mgl-layerControl {
-  width: calc(70% + 20px) !important;
+  max-width: calc(100vw - 90px) !important;
+  overflow: visible !important;
+  transition: margin 700ms;
+
+  overflow-y: scroll !important;
+  max-height: calc(100vh - 100px);
+
+  background: transparent;
+  box-shadow: none !important;
+}
+
+.mgl-layerControl.hiddenRight {
+    overflow-y: hidden !important;
+}
+
+.mgl-layerControlDirectory {
+  margin-left: 50px;
+}
+
+.mgl-breadcrumb {
+  display: block;
+  background-color: black;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  margin-left: 0;
+  cursor: pointer;
 }
 
 
