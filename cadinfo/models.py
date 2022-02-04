@@ -65,6 +65,13 @@ class Landuse(models.Model):
 
     geometry = gis.GeometryField()
 
+    @property
+    def address(self):
+        try:
+            return Address.objects.get(cadnum=self.cadnum).address
+        except Address.DoesNotExist:
+            return None
+
     def get_absolute_url(self):
         return reverse('cad_info', kwargs=dict(cad_num=self.cadnum))
 
