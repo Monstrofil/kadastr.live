@@ -8,6 +8,11 @@
       "url": "https://test.tiles.kadastr.live/capabilities/kadastr.json",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
+    "dzk_pzf": {
+      "type": "vector",
+      "url": "https://test.tiles.kadastr.live/capabilities/dzk_pzf.json",
+      "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
+    },
     "raster-tiles": {
       "type": "raster",
       "tiles": [
@@ -46,10 +51,7 @@
     },
     "dummy": {
       "type": "geojson",
-      "data": {
-        "type": "FeatureCollection",
-        "features": []
-      }
+      "data": {"type": "FeatureCollection", "features": []}
     }
   },
   "glyphs": "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
@@ -154,6 +156,18 @@
           ]
         }
       }
+    },
+    {
+      "id": "dzk__pzf",
+      "type": "fill",
+      "source": "dzk_pzf",
+      "source-layer": "pzf_data",
+      "paint": {
+        "fill-color": "rgba(30, 92, 0, 0.5)",
+        "fill-antialias": true,
+        "fill-outline-color": "rgba(32, 32, 32, 0.5)"
+      },
+      "layout": {"visibility": "none"}
     }
   ],
   "id": "positron"

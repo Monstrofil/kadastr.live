@@ -1,6 +1,31 @@
 [webserver]
 port = ":8686"
 
+[[providers]]
+name = "pzf_gpkg"
+type = "gpkg"
+filepath = "/var/www/test.tiles.cadastr.info/pzf.gpkg"
+
+	[[providers.layers]]
+	name = "pzf_data"
+	srid = 4326
+	sql = """
+		SELECT
+			fid, geom,
+			NazObPZF, NZoPZF,
+			AdmRozPZF, AdrAdmPZF,
+			cast(PidDPZF as text) AS PidDPZF, PidNPZF,
+			ZnPZF,
+			cast(Updated as text) AS Updated,
+			si.minx, si.miny, si.maxx, si.maxy
+		FROM
+			pzf lp
+		JOIN
+			rtree_pzf_geom si ON lp.fid = si.id
+		WHERE
+			!BBOX!
+	"""
+
 # register data providers
 [[mvt_providers]]
 name = "kadastr"
@@ -98,6 +123,14 @@ srid = 3857
   """
 
 [[maps]]
+name = "dzk_pzf"
+
+  [[maps.layers]]
+  provider_layer = "pzf_gpkg.pzf_data"
+  min_zoom = 3
+  max_zoom = 20
+
+[[maps]]
 name = "kadastr"
 
   [[maps.layers]]
@@ -138,7 +171,7 @@ name = "parcels_history_{{ update.id }}"
 
 {% endfor %}
 
-# [cache]
-#   max_zoom = 14
-#   type = "file"
-#   basepath = "cache"
+[cache]
+  max_zoom = 13
+  type = "file"
+  basepath = "cache"

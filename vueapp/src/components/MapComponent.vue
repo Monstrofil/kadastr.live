@@ -234,6 +234,13 @@ export default {
             directory: "Базові шари"
           },
           {
+            id: "dzk__pzf",
+            name: "Заповідний фонд",
+            hidden: false,
+            group: "ДЗК",
+            directory: "Оверлей"
+          },
+          {
             id: "orto-ersi",
             name: "Ортофото Ersi (2018+)",
             hidden: false,
