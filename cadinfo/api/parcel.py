@@ -1,8 +1,10 @@
 import sys
 from django.core.paginator import Paginator
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework.serializers import ModelSerializer
 from rest_framework_filters.backends import ComplexFilterBackend
 from rest_framework_gis.serializers import GeoModelSerializer
 import rest_framework_filters as filters
@@ -31,15 +33,63 @@ class ParcelPagination(PageNumberPagination):
         ))
 
 
+class RevisionSerializer(ModelSerializer):
+    class Meta:
+        model = Update
+        fields = [
+            'id',
+            'created_at'
+        ]
+
+
+
+
 class ParcelSerializer(GeoModelSerializer):
+
+    revision = RevisionSerializer()
+
     class Meta:
         model = Landuse
         fields = [
             'id',
             'cadnum',
-            'geometry',
-            'purpose_code',
+            'category',
+            'area',
+            'unit_area',
+            'koatuu',
+            'use',
             'purpose',
+            'purpose_code',
+            'ownership',
+            'ownershipcode',
+            'geometry',
+
+            'revision',
+        ]
+
+
+class ParcelHistorySerializer(ParcelSerializer):
+    history = ParcelSerializer(many=True)
+    revision = RevisionSerializer()
+
+    class Meta:
+        model = Landuse
+        fields = [
+            'id',
+            'cadnum',
+            'category',
+            'area',
+            'unit_area',
+            'koatuu',
+            'use',
+            'purpose',
+            'purpose_code',
+            'ownership',
+            'ownershipcode',
+            'geometry',
+
+            'history',
+            'revision',
         ]
 
 
@@ -57,9 +107,17 @@ class ParcelView(viewsets.ReadOnlyModelViewSet):
         revision=Update.get_latest_update().id
     ).order_by('id')
 
+    lookup_field = 'cadnum'
+
     serializer_class = ParcelSerializer
     pagination_class = ParcelPagination
 
     filter_backends = [ComplexFilterBackend]
     filter_class = ManagerFilter
 
+    @action(detail=True, methods=['get'])
+    def history(self, request, cadnum=None):
+        parcel = self.get_object()
+
+        serializer = ParcelHistorySerializer(instance=parcel)
+        return Response(serializer.data)

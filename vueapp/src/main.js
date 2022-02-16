@@ -4,6 +4,8 @@ import {createRouter, createWebHistory} from 'vue-router'
 import VueClipboard from 'vue3-clipboard'
 import VueMapbox from '@studiometa/vue-mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import 'mapbox-gl-compare/dist/mapbox-gl-compare.css';
+
 import axios from 'axios';
 import './assets/styles.scss'
 import DynamicModalWindows from "@/components/DynamicModalWindows";

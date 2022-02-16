@@ -97,6 +97,24 @@ class Landuse(models.Model):
     def get_absolute_url(self):
         return reverse('cad_info', kwargs=dict(cad_num=self.cadnum))
 
+    def history(self):
+        return Landuse.objects.filter(
+            cadnum=self.cadnum,
+            koatuu=self.koatuu
+        ).distinct(
+            'cadnum',
+            'category',
+            'area',
+            'unit_area',
+            'koatuu',
+            'use',
+            'purpose',
+            'purpose_code',
+            'ownership',
+            'ownershipcode',
+            'geometry',
+        )
+
     class Meta:
         managed = False
         db_table = 'landuse'
