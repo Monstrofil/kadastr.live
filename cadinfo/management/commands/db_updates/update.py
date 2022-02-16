@@ -26,6 +26,7 @@ from retry import retry
 from tqdm.contrib.concurrent import process_map, thread_map
 from tqdm.contrib.logging import logging_redirect_tqdm
 
+from cadinfo.changesets import create_changeset
 from cadinfo.models import Landuse, Update
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -346,6 +347,13 @@ def update_database():
         level_4_koatuu.sort(key=attrgetter('unique_id'))
         _download_and_insert(latest_update, level_4_koatuu)
 
+    # detecting changes to create analysis table
+    create_changeset(
+        revision=Update.objects.get(id=latest_update.id),
+        previous=Update.objects.get(id=Update.get_latest_update().id),
+    )
+
+    # everything is ok => success status
     Update.objects.filter(
         id=latest_update.id
     ).update(

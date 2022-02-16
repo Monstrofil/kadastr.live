@@ -28,7 +28,7 @@ class LandInfoView(TemplateView):
         all_parcels = list(history)
 
         content['land'] = parcel
-        content['history'] = list( zip(all_parcels, [None, *all_parcels[:-1]]))
+        content['history'] = list( zip([None, *all_parcels[:-1]], all_parcels))
 
         return content
 

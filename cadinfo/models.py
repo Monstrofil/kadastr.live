@@ -35,6 +35,28 @@ class Address(models.Model):
     address = models.TextField()
 
 
+class LanduseChange(models.Model):
+    class Action:
+        CREATE = 'create'
+        DELETE = 'delete'
+        UPDATE = 'update'
+
+    revision = models.ForeignKey(Update, on_delete=models.CASCADE, related_name='diff_previous')
+    previous = models.ForeignKey(Update, on_delete=models.CASCADE, related_name='diff_next')
+
+    cadnum = models.CharField(max_length=25)
+    action = models.CharField(
+        max_length=10,
+        choices=[
+            [Action.CREATE, Action.CREATE],
+            [Action.DELETE, Action.DELETE],
+            [Action.UPDATE, Action.UPDATE],
+        ]
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class Landuse(models.Model):
     OWNERSHIP_TO_NAME = {
         'Комунальна власність': 200,
