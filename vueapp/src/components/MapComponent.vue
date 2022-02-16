@@ -449,5 +449,14 @@ export default {
   cursor: pointer;
 }
 
+.mgl-layerControl .checkbox {
+   display: flex;
+   align-items:flex-end;
+}
+
+input.slide-toggle {
+  align-self: center;
+}
+
 
 </style>

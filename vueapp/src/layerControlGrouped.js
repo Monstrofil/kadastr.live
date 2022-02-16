@@ -191,9 +191,12 @@ export class layerControlGrouped {
           // if (layer.parent) {
           //   checked = mglHelper.GetLayerVisibility(this._mapLayers, this._mapLayerIds, layer.parent);
           // }
-          let { layerSelector, newSources } = lcCreateLayerToggle(this._map, layer, checked, this._sources);
+          let { layerSelector, newSources, filters } = lcCreateLayerToggle(this._map, layer, checked, this._sources);
           this._sources = newSources;
           groupDiv.appendChild(layerSelector)
+          if (filters) {
+            groupDiv.appendChild(filters)
+          }
         }
         directoryDiv.appendChild(groupDiv);
       }
@@ -495,6 +498,7 @@ function lcCreateLayerToggle(map, layer, checked, sources) {
   div.appendChild(input);
   div.appendChild(label);
 
+  let directory = null;
   if (layer.metadata && layer.metadata.filterSchema) {
     let filterSpan = document.createElement("span");
     filterSpan.style.float = "right";
@@ -511,7 +515,7 @@ function lcCreateLayerToggle(map, layer, checked, sources) {
       this.style.opacity = 0.3;
     }
 
-    let directory = lcCreateDicrectory("Фільтри", '-');
+    directory = lcCreateDicrectory("Фільтри", '-');
     directory.style = 'margin-left: 0;'
 
     // CREATE INDIVIDUAL FILTER TOGGLES
@@ -528,7 +532,7 @@ function lcCreateLayerToggle(map, layer, checked, sources) {
       directory.appendChild(groupDiv)
       groupDiv.style.display = "none";
     }
-    div.appendChild(directory)
+    // div.appendChild(directory)
 
     // collapse element by default
     div.children[0].classList.add("collapsed")
@@ -536,7 +540,7 @@ function lcCreateLayerToggle(map, layer, checked, sources) {
 
   div.appendChild(legend);
 
-  return { layerSelector: div, newSources: sources }
+  return { layerSelector: div, newSources: sources, filters: directory }
 }
 
 function lcCheckLazyLoading(map, layer) {
