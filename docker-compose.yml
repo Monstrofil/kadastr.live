@@ -33,3 +33,23 @@ services:
     restart: unless-stopped
     ports:
     - 8882:80
+
+  webserver:
+    build: .
+    restart: unless-stopped
+    environment:
+      - APP_MODULE=cadastr.wsgi:application
+      - DEBUG
+      - LOG_LEVEL=debug
+      - PORT=8881
+      - SQL_HOST
+      - SQL_USER
+      - SQL_PASS
+      - SQL_DB
+      - SQL_PORT
+    entrypoint: /app/start-reload.sh
+    volumes:
+      - .:/app
+      - ./empty:/app/venv
+    ports:
+      - 8881:8881

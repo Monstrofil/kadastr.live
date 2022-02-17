@@ -39,12 +39,15 @@ if os.name == 'nt':
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'vyfwvyj9)tf)kb)6**!ee60thu!*vaq#v9ey#uaddk+2+p488o'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'vyfwvyj9)tf)kb)6**!ee60thu!*vaq#v9ey#uaddk+2+p488o')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG') in [None, '1']
 
-ALLOWED_HOSTS = ['*']
+if os.environ.get('ALLOWED_HOSTS'):
+    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',')
+else:
+    ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -103,11 +106,11 @@ WSGI_APPLICATION = 'cadastr.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'postgres',
-        'HOST': 'kadastr.live',
-        'PORT': 12321,
-        'USER': env('KADASTR_DB_USER'),
-        'PASSWORD': env('KADASTR_DB_PASSWORD')
+        'NAME': env('SQL_DB'),
+        'HOST': env('SQL_HOST'),
+        'PORT': int(env('SQL_PORT')),
+        'USER': env('SQL_USER'),
+        'PASSWORD': env('SQL_PASS')
     },
     # ssh -R 9306:localhost:9306 root@parkingdp.online
     'sphinx': {
@@ -160,10 +163,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+STATIC_ROOT = BASE_DIR / "static"
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+STATICFILES_DIRS = []
 
 from django.db.backends.mysql import features
 # dirty hack to work with sphinxql
