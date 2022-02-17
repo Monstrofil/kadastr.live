@@ -115,7 +115,7 @@ DATABASES = {
     # ssh -R 9306:localhost:9306 root@parkingdp.online
     'sphinx': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'localhost',
+        'HOST': 'sphinx',
         'PORT': 36307,
     }
 }
