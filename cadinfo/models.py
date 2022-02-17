@@ -1,3 +1,5 @@
+from operator import itemgetter, attrgetter
+
 from django.db import models
 from django.contrib.gis.db import models as gis
 from django.urls import reverse
@@ -98,7 +100,7 @@ class Landuse(models.Model):
         return reverse('cad_info', kwargs=dict(cad_num=self.cadnum))
 
     def history(self):
-        return Landuse.objects.filter(
+        landuses = Landuse.objects.filter(
             cadnum=self.cadnum,
             koatuu=self.koatuu
         ).distinct(
@@ -114,6 +116,12 @@ class Landuse(models.Model):
             'ownershipcode',
             'geometry',
         )
+
+        # ordering by creation date
+        landuses = list(landuses)
+        landuses.sort(key=attrgetter('id'))
+        landuses.reverse()
+        return landuses
 
     class Meta:
         managed = False
