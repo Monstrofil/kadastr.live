@@ -42,8 +42,6 @@ class RevisionSerializer(ModelSerializer):
         ]
 
 
-
-
 class ParcelSerializer(GeoModelSerializer):
 
     revision = RevisionSerializer()
@@ -87,6 +85,7 @@ class ParcelHistorySerializer(ParcelSerializer):
             'ownership',
             'ownershipcode',
             'geometry',
+            'address',
 
             'history',
             'revision',

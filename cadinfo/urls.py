@@ -3,7 +3,7 @@ from django.contrib.sitemaps.views import sitemap, index
 from django.views.decorators.cache import cache_page
 from rest_framework import routers
 
-from .api import ParcelView
+from .api import ParcelView, UpdateView
 from .sitemaps import LanduseSitemap
 from .views import LandInfoView, IndexView, ExportGeoJsonView, SearchView, MetricsView, \
     TegolaConfigView
@@ -14,6 +14,7 @@ sitemaps = {
 
 router = routers.SimpleRouter()
 router.register(r'api/parcels', ParcelView)
+router.register(r'api/updates', UpdateView)
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),

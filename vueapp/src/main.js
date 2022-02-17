@@ -19,6 +19,7 @@ import 'v-tooltip/dist/v-tooltip.css';
 import "mapbox-layer-control/layerControl.css";
 import MainPage from "@/components/MainPage";
 import ParcelInfoPage from "@/components/ParcelInfoPage";
+import UpdatesListPage from "@/components/UpdatesListPage";
 
 // 2. Define some routes
 // Each route should map to a component.
@@ -26,6 +27,7 @@ import ParcelInfoPage from "@/components/ParcelInfoPage";
 const routes = [
   { name: 'main', path: '', component: MainPage },
   { name: 'parcel', path: '/parcel/:pk?', component: ParcelInfoPage },
+  { name: 'update', path: '/update/:pk?', component: UpdatesListPage },
   { name: 'about', path: '/about', component: AboutPageComponent },
 ]
 
