@@ -57,7 +57,7 @@
           <div
               v-for="(item, index) in parcelInfo.history"
               :key="item"
-              :set="previous = (index > 0) ? parcelInfo.history[index - 1]: null"
+              :set="previous = (index < parcelInfo.history.length - 1) ? parcelInfo.history[index + 1]: null"
           >
 
             <li v-if="previous">Зміна інформації</li>
