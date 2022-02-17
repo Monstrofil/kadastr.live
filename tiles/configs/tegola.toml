@@ -1,5 +1,6 @@
 [webserver]
 port = ":8686"
+uri_prefix = "/tiles/"
 
 [[providers]]
 name = "pzf_gpkg"

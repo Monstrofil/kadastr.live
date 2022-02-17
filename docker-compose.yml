@@ -27,12 +27,26 @@ services:
       - SQL_PASS
       - SQL_DB
       - SQL_PORT
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tiles.rule=PathPrefix(`/tiles/`)"
+      - "traefik.http.routers.tiles.entrypoints=web,websecure"
+      - "traefik.http.routers.tiles.middlewares=cors"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cors.headers.addvaryheader=true"
+      - "containers.group=kadastr.live"
 
   nginx:
     build: vueapp
     restart: unless-stopped
     ports:
     - 8882:80
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.nginx.entrypoints=web,websecure"
+      - "traefik.http.routers.nginx.priority=-1"
+      - "containers.group=kadastr.live"
 
   webserver:
     build: .
@@ -53,3 +67,41 @@ services:
       - ./empty:/app/venv
     ports:
       - 8881:8881
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webserver.rule=PathPrefix(`/api`) \
+          || PathPrefix(`/admin`) || PathPrefix(`/__debug__`) \
+          || PathPrefix(`/media`) || PathPrefix(`/static`)"
+      - "traefik.http.routers.webserver.entrypoints=web,websecure"
+      - "containers.group=kadastr.live"
+
+  traefik:
+    image: "traefik:v2.5"
+    command:
+      - "--api=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.constraints=Label(`containers.group`,`kadastr.live`)"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls=true"
+      - "--entryPoints.web.forwardedHeaders.insecure"
+    ports:
+      - "11080:80"
+      - "11443:443"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=PathPrefix(`/traefik/admin`) || PathPrefix(`/traefik/api`)|| HeadersRegexp(`Referer`, `.*/traefik/.*`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.middlewares=admin-stripprefix"
+      - "traefik.http.routers.traefik.entrypoints=web,websecure"
+      - "traefik.http.routers.traefik.priority=9999"
+      - "traefik.http.middlewares.admin-stripprefix.stripPrefix.prefixes=/traefik/admin,/traefik/]"
+      - "traefik.http.middlewares.admin-stripprefix.stripPrefix.forceSlash=true"
+      - "containers.group=kadastr.live"
+    depends_on:
+      - nginx
+      - webserver
+      - tiles
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
