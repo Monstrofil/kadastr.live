@@ -392,15 +392,19 @@ export default {
     width: 100%;
   }
 }
-@media (max-width: 1000px) {
+@media (min-width: 1600px) {
   .mgl-layerControl {
     margin: 65px 10px 0 0 !important;
-    width: 300px;
+    width: 450px !important;
   }
 
   .mgl-layerControl.hiddenRight {
-    margin-right: calc(-100% + 50px) !important;
-    width: 100%;
+    margin: 65px 10px 0 0 !important;
+    width: 450px !important;
+  }
+
+  .mgl-breadcrumb {
+    display: none !important;
   }
 
   .mapboxgl-ctrl-zoom-in, .mapboxgl-ctrl-zoom-out, .mapboxgl-ctrl-compass {
