@@ -28,7 +28,6 @@ export default {
       this.modalWindows = this.modalWindows.filter((item) => {
         return item.id !== window.windowId
       })
-      console.log(this.modalWindows)
     },
     openYesNoDialog(header, content, onAgree, onReject) {
       const modalId = this.modalId++;

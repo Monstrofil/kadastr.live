@@ -5,12 +5,12 @@
   "sources": {
     "cadastr": {
       "type": "vector",
-      "url": "https://test.tiles.kadastr.live/capabilities/kadastr.json",
+      "url": "/tiles/capabilities/kadastr.json",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
     "dzk_pzf": {
       "type": "vector",
-      "url": "https://test.tiles.kadastr.live/capabilities/dzk_pzf.json",
+      "url": "/tiles/capabilities/dzk_pzf.json",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
     "raster-tiles": {

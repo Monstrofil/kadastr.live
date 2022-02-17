@@ -45,7 +45,7 @@
             </tbody>
           </table>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4" style="min-height: 300px">
           <GeoJSONDisplay :geo-feature="parcelInfo.geometry"/>
         </div>
 
@@ -150,11 +150,9 @@ export default {
   },
 
   mounted() {
-    console.log(this.$route.params)
     axios.get(
         `/api/parcels/${this.$route.params.pk}/history/`
     ).then(response => {
-      console.log(response)
       this.parcelInfo = response.data;
     });
   }

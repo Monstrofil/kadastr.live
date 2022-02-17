@@ -91,8 +91,6 @@ export class layerControlGrouped {
     //   })
     // })
 
-    console.log(config)
-
     // TARGET CONFIG LAYOUT
     // this._layerControlConfig = {
     //     directory1: {
@@ -262,22 +260,18 @@ export class layerControlGrouped {
             new Map()
         );
         groupedMap.forEach((filters, key) => {
-          console.log("key, filters", key, filters)
+          console.debug("key, filters", key, filters)
           let valueFilters = ["any"];
           Array.from(filters).forEach((filter) => {
-            console.log(filter)
             if (!filter.checked)
               return
 
             valueFilters.push(JSON.parse(filter.dataset.filterQuery));
           })
-          console.log(valueFilters);
           allMapFilters.push(valueFilters);
         })
-        console.log(groupedMap)
 
         map.setFilter(e.target.dataset.mapLayerName, allMapFilters);
-        console.log(allMapFilters);
 
       //   mglHelper.SetLayerVisibility(map, e.target.checked, e.target.id);
       //   if (e.target.dataset.children) {
@@ -523,7 +517,6 @@ function lcCreateLayerToggle(map, layer, checked, sources) {
 
       let groupDiv = lcCreateGroup(value.hint, null, null);
       for (const option of Object.values(value.options)) {
-        console.log(option)
         let { layerSelector, newSources } = lcCreateFilterToggle(
             map, option, checked, sources, key, layer.id);
           console.log(newSources)

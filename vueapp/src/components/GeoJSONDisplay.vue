@@ -21,8 +21,6 @@ export default {
     });
 
     map.on('load', () => {
-
-      console.log(this.geoFeature)
       let bbox = turf.bbox({
         "type": "FeatureCollection",
         "features": [
