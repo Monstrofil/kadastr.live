@@ -55,7 +55,6 @@ services:
       - APP_MODULE=cadastr.wsgi:application
       - DEBUG
       - LOG_LEVEL=debug
-      - PORT=8881
       - SQL_HOST
       - SQL_USER
       - SQL_PASS
@@ -65,13 +64,9 @@ services:
     volumes:
       - .:/app
       - ./empty:/app/venv
-    ports:
-      - 8881:8881
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.webserver.rule=PathPrefix(`/api`) \
-          || PathPrefix(`/admin`) || PathPrefix(`/__debug__`) \
-          || PathPrefix(`/media`) || PathPrefix(`/static`)"
+      - "traefik.http.routers.webserver.rule=PathPrefix(`/api`) || PathPrefix(`/admin`) || PathPrefix(`/__debug__`) || PathPrefix(`/media`) || PathPrefix(`/static`) || PathPrefix(`/export`) || PathPrefix(`/search`) "
       - "traefik.http.routers.webserver.entrypoints=web,websecure"
       - "containers.group=kadastr.live"
 
