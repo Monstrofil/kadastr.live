@@ -165,7 +165,6 @@
     }
 
     function export_geojson() {
-        console.log(map.getBounds());
         const bounds = map.getBounds();
         const url = '/export/' + bounds._sw.lat + '/' + bounds._sw.lng + '/' + bounds._ne.lat + '/' + bounds._ne.lng + '/'
         window.location.href = url;
@@ -348,7 +347,7 @@
           onChange(event) {
             var point = new L.Point(event.location[0], event.location[1]);
             var latlngpoint = L.Projection.SphericalMercator.unproject(point);
-            console.log(latlngpoint);
+
             map.flyTo({
                 center: [
                     latlngpoint.lng,

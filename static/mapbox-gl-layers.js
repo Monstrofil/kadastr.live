@@ -76,7 +76,6 @@ Layers.prototype._update = function _update () {
   yo.update(document.getElementsByClassName('mapboxgl-ctrl mapboxgl-layers')[0], this._render())
 }
 Layers.prototype._render = function _render () {
-    console.log('rendering')
   var layers = this.options.layers
   var className = 'mapboxgl-ctrl mapboxgl-layers'
   return (function () {
