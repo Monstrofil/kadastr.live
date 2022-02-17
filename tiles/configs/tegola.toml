@@ -1,0 +1,122 @@
+[webserver]
+port = ":8686"
+
+[[providers]]
+name = "pzf_gpkg"
+type = "gpkg"
+filepath = "/static/pzf.gpkg"
+
+	[[providers.layers]]
+	name = "pzf_data"
+	srid = 4326
+	sql = """
+		SELECT
+			fid, geom,
+			NazObPZF, NZoPZF,
+			AdmRozPZF, AdrAdmPZF,
+			cast(PidDPZF as text) AS PidDPZF, PidNPZF,
+			ZnPZF,
+			cast(Updated as text) AS Updated,
+			si.minx, si.miny, si.maxx, si.maxy
+		FROM
+			pzf lp
+		JOIN
+			rtree_pzf_geom si ON lp.fid = si.id
+		WHERE
+			!BBOX!
+	"""
+
+# register data providers
+[[mvt_providers]]
+name = "kadastr"
+type = "postgis"
+host = "${SQL_HOST}"
+port = "${SQL_PORT}"
+database = "postgres"
+user = "${SQL_USER}"
+password = "${SQL_PASS}"
+srid = 3857
+
+  [[mvt_providers.layers]]
+  name = "land_polygons"
+  geometry_fieldname = "geometry"
+  geometry_type = "polygon"
+  id_fieldname = "id"
+  srid = 4326
+  sql = """
+    SELECT
+      q.*,
+      (SELECT address FROM cadinfo_address WHERE cadinfo_address.cadnum = q.cadnum) AS address
+    FROM (
+		SELECT
+		  ST_AsMVTGeom(ST_AsBinary(geometry::geometry), !BBOX!) AS geometry,
+		  ownership,
+		  cadnum,
+		  purpose,
+		  category,
+		  id
+		FROM landuse
+		WHERE
+		  revision = (
+			SELECT id
+			FROM cadinfo_update
+			WHERE status = 'success'
+			ORDER BY id DESC
+			LIMIT 1
+		  ) AND
+		  geometry && !BBOX!
+    ) q
+
+  """
+
+  [[mvt_providers.layers]]
+  name = "polygons"
+  geometry_fieldname = "geometry"
+  geometry_type = "polygon"
+  id_fieldname = "id"
+  srid = 3857
+  sql = """
+    SELECT ST_AsMVTGeom(ST_AsBinary(geometry), !BBOX!) AS geometry, 0 AS id
+    FROM public.landuse_statistics WHERE geometry && !BBOX!
+  """
+
+  [[mvt_providers.layers]]
+  name = "centroids"
+  geometry_fieldname = "geometry"
+  geometry_type = "point"
+  id_fieldname = "id"
+  sql = """
+    SELECT ST_AsMVTGeom(ST_AsBinary(point), !BBOX!) AS geometry, to_char(parcels, '9 999 999') AS parcels, 0 AS id
+    FROM public.landuse_statistics WHERE geometry && !BBOX!
+  """
+
+[[maps]]
+name = "dzk_pzf"
+
+  [[maps.layers]]
+  provider_layer = "pzf_gpkg.pzf_data"
+  min_zoom = 3
+  max_zoom = 20
+
+[[maps]]
+name = "kadastr"
+
+  [[maps.layers]]
+  provider_layer = "mvt_kadastr.polygons"
+  min_zoom = 3
+  max_zoom = 11
+
+  [[maps.layers]]
+  provider_layer = "mvt_kadastr.land_polygons"
+  min_zoom = 11
+  max_zoom = 20
+
+  [[maps.layers]]
+  provider_layer = "mvt_kadastr.centroids"
+  min_zoom = 3
+  max_zoom = 7
+
+[cache]
+  max_zoom = 13
+  type = "file"
+  basepath = "cache"

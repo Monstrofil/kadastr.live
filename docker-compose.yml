@@ -2,12 +2,25 @@ version: "3.5"
 services:
   sphinx:
     image: macbre/sphinxsearch:3.4.1
+    restart: unless-stopped
     ports:
     - "127.0.0.1:36307:36307" # bind to local interface only!
     volumes:
     - ${SPHINX_CACHE_DIR:-./data:/opt/sphinx/index/}
     - ./sphinx/sphinx.conf:/opt/sphinx/conf/sphinx.conf
     - ./sphinx/sphinx_template.conf:/opt/sphinx/conf/sphinx_template.conf
+    environment:
+      - SQL_HOST
+      - SQL_USER
+      - SQL_PASS
+      - SQL_DB
+      - SQL_PORT
+
+  tiles:
+    build: tiles
+    restart: unless-stopped
+    ports:
+      - 8686:8686
     environment:
       - SQL_HOST
       - SQL_USER
