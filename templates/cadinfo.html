@@ -77,50 +77,47 @@
 
         {% for parcel in history %}
             <span>{{ forloop.counter }}. Оновлення даних {{ parcel.0.revision.created_at }}.</span><br>
-            {% if parcel.1.cadnum %}
+
 
                 <span>Зміна інформації</span>
                 <table class="pure-table pure-table-horizontal">
                     <thead>
                         <tr>
-                        <td>До {{ parcel.0.revision.created_at }}</td>
+                        {% if parcel.0.cadnum %}<td>До {{ parcel.0.revision.created_at }}</td>{% endif %}
                         <td>Після {{ parcel.1.revision.created_at }}</td>
                         </tr>
                     </thead>
                     <tbody>
                     {% if parcel.0.purpose != parcel.1.purpose %}
                     <tr>
-                        <td style="background-color: #ffe7e7">{{ parcel.0.purpose }}</td>
+                        {% if parcel.0.cadnum %}<td style="background-color: #ffe7e7">{{ parcel.0.purpose }}</td>{% endif %}
                         <td style="background-color: #d2ffd2">{{ parcel.1.purpose }}</td>
                     </tr>
                     {% endif %}
 
                     {% if parcel.0.ownership != parcel.1.ownership %}
                     <tr>
-                        <td style="background-color: #ffe7e7">{{ parcel.0.ownership }}</td>
+                        {% if parcel.0.cadnum %}<td style="background-color: #ffe7e7">{{ parcel.0.ownership }}</td>{% endif %}
                         <td style="background-color: #d2ffd2">{{ parcel.1.ownership }}</td>
                     </tr>
                     {% endif %}
 
                     {% if parcel.0.use != parcel.1.use %}
                     <tr>
-                        <td style="background-color: #ffe7e7">{{ parcel.0.use }}</td>
+                        {% if parcel.0.cadnum %}<td style="background-color: #ffe7e7">{{ parcel.0.use }}</td>{% endif %}
                         <td style="background-color: #d2ffd2">{{ parcel.1.use }}</td>
                     </tr>
                     {% endif %}
 
                     {% if parcel.0.geometry != parcel.1.geometry %}
                     <tr>
-                        <td style="background-color: #ffe7e7">{{ parcel.0.geometry.json }}</td>
+                        {% if parcel.0.cadnum %}<td style="background-color: #ffe7e7">{{ parcel.0.geometry.json }}</td>{% endif %}
                         <td style="background-color: #d2ffd2">{{ parcel.1.geometry.json }}</td>
                     </tr>
                     {% endif %}
                     </tbody>
 
                 </table>
-            {% else %}
-                <span>Інформацію додано до бази для відстеження</span>
-            {% endif %}
 
             <hr>
         {% endfor %}

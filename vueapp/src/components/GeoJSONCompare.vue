@@ -42,7 +42,7 @@ export default {
           }
         ]
       });
-      before.fitBounds(bbox, {duration: 0, offset: [20, 20]});
+      before.fitBounds(bbox, {duration: 0, padding: 30});
       if (this.leftGeoJson) {
         before.addSource('geojson', {
           type: 'geojson',
@@ -58,8 +58,8 @@ export default {
           'type': 'fill',
           'source': 'geojson',
           'paint': {
-            "fill-opacity": 0.5,
-            "fill-color": "rgb(200,110,41)"
+            "fill-opacity": .8,
+            "fill-color": "#ff9b9b"
           }
         });
       }
@@ -86,8 +86,8 @@ export default {
         'type': 'fill',
         'source': 'geojson',
         'paint': {
-          "fill-opacity": 0.5,
-          "fill-color": "rgb(142,200,41)"
+          "fill-opacity": .8,
+          "fill-color": "#93ff93"
         }
       });
     });

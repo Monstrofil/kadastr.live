@@ -22,6 +22,7 @@
     "mapbox-gl": "^2.4.1",
     "mapbox-gl-compare": "^0.4.0",
     "mapbox-layer-control": "0.0.95",
+    "moment": "^2.29.1",
     "popper.js": "^1.16.1",
     "v-tooltip": "^4.0.0-beta.5",
     "vue": "^3.2.6",
