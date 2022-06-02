@@ -5,12 +5,17 @@
   "sources": {
     "cadastr": {
       "type": "vector",
-      "url": "/tiles/capabilities/kadastr.json",
+      "url": "https://kadastr.live/tiles/capabilities/kadastr.json",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
     "dzk_pzf": {
       "type": "vector",
-      "url": "/tiles/capabilities/dzk_pzf.json",
+      "url": "https://kadastr.live/tiles/capabilities/dzk_pzf.json",
+      "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
+    },
+    "dzk_index_map": {
+      "type": "vector",
+      "url": "https://kadastr.live/tiles/capabilities/dzk_index_map.json",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
     "raster-tiles": {
