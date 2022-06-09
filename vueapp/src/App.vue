@@ -179,7 +179,7 @@ export default {
 
 }
 
-mapboxgl.accessToken = "pk.eyJ1IjoibW9uc3Ryb2ZpbCIsImEiOiJjazVjbHc0ZWoxczNpM2xsamlsb2Vla3U3In0.D_AounEf87Va3Zq6Z8tTsg";
+mapboxgl.accessToken = 'pk.eyJ1IjoibW9uc3Ryb2ZpbCIsImEiOiJjbDQ3OXVzaDcwY2prM2VteDN3eG5yenV1In0.9_SVnBE2zE7zQbt44O9OBw';
 </script>
 
 <style>

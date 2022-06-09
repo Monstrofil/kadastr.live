@@ -8,6 +8,7 @@
 
 import * as domHelper from "mapbox-layer-control/lib/domHelpers.js";
 import * as mglHelper from "mapbox-layer-control/lib/mglHelpers.js";
+import {GetLayerVisibility, GetMapLayerIds} from "mapbox-layer-control/lib/mglHelpers";
 
 export class layerControlGrouped {
 
@@ -126,9 +127,13 @@ export class layerControlGrouped {
     this._div = lcCreateButton(this._collapsed);
 
     // GET THE MAP LAYERS AND LAYER IDS AND SET TO VISIBLE ANY LAYER IDS IN THE QUERY PARAMS, AND ADD THEM TO THE QUERY PARAMS IF MISSING
-    const activeLayers = mglHelper.GetActiveLayers(this._map, this._layers);
+    const activeLayers = GetActiveLayers(this._map, this._layers);
 
     this._layers.forEach(l => {
+
+      if(l.chain && activeLayers.includes(l.id)) {
+        map.setLayoutProperty(l.chain, "visibility", "visible");
+      }
 
       // CHECK TO MAKE SURE ALL CHILDREN ARE ACTIVE IF PARENT IS ACTIVE
       if (l.parent && activeLayers.includes(l.parent)) {
@@ -144,7 +149,7 @@ export class layerControlGrouped {
       }
     })
 
-    this._activeLayers = mglHelper.GetActiveLayers(this._map, this._layers)
+    this._activeLayers = GetActiveLayers(this._map, this._layers)
     this._mapLayers = this._map.getStyle().layers;
     this._mapLayerIds = mglHelper.GetMapLayerIds(this._mapLayers);
 
@@ -235,6 +240,9 @@ export class layerControlGrouped {
 
       if (e.target.dataset.mapLayer) {
         mglHelper.SetLayerVisibility(map, e.target.checked, e.target.id);
+        if(e.target.dataset.chain !== 'undefined') {
+          mglHelper.SetLayerVisibility(map, e.target.checked, e.target.dataset.chain);
+        }
         if (e.target.dataset.children) {
           let children = document.querySelectorAll("[data-parent]");
           for (let i = 0; i < children.length; i++) {
@@ -428,6 +436,7 @@ function lcCreateLayerToggle(map, layer, checked, sources) {
   input.name = (!layer.name) ? layer.id : layer.name;
   input.type = "checkbox"
   input.id = layer.id;
+  input.dataset.chain = layer.chain;
   input.dataset.group = (layer.group) ? layer.group : false;
 
   if (layer.metadata.lazyLoading && layer.metadata.source && layer.metadata.source.id && layer.metadata.source.type && layer.metadata.source.data) {
@@ -730,6 +739,26 @@ function lcSetActiveLayers(l, checked) {
       }, '', url);
     }
   }
+}
+
+function GetActiveLayers(map, layers) {
+  let keys = layers.reduce((i, l) => {
+    return [...i, l.id]
+  }, []);
+  let _map = map;
+  let _mapLayers = _map.getStyle().layers;
+  let _ids = GetMapLayerIds(_mapLayers);
+  let urlParams = new URLSearchParams(window.location.search);
+  let _layers = [...urlParams.keys()];
+  _layers.map(function(l) {
+    if (keys.indexOf(l) > -1) {
+      let visibility = GetLayerVisibility(_mapLayers, _ids, l);
+      if (!visibility) {
+        _map.setLayoutProperty(l, "visibility", "visible")
+      }
+    }
+  });
+  return _layers;
 }
 
 function lcSetLegendVisibility(e) {

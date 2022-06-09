@@ -40,7 +40,9 @@
     },
     "orto-tiles": {
       "type": "raster",
-      "tiles": ["/map/rtile/carto_2240035321813140995/ua/{z}/{x}/{y}.png"],
+      "tiles": [
+        "https://tiles.kadastr.live/geoserver/kadastr/wms?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=tiffs"
+      ],
       "tileSize": 256,
       "attribution": "DZK",
       "maxzoom": 19
@@ -84,6 +86,33 @@
       "minzoom": 0,
       "maxzoom": 22,
       "layout": {"visibility": "none"}
+    },
+    {
+      "id": "dzk__index_map_lines",
+      "type": "line",
+      "source": "dzk_index_map",
+      "source-layer": "index_data",
+      "minzoom": 0,
+      "layout": {
+        "visibility": "none",
+        "line-cap": "butt",
+        "line-join": "bevel",
+        "line-round-limit": 2
+      },
+      "paint": {
+        "line-color": "rgba(0, 40, 251,  0.7)",
+        "line-gap-width": 0,
+        "line-blur": 2,
+        "line-width": {"stops": [[10, 0.5], [13, 2], [16, 4]]}
+      }
+    },
+    {
+      "id": "dzk__index_map_poly",
+      "type": "fill",
+      "source": "dzk_index_map",
+      "source-layer": "index_data",
+      "layout": {"visibility": "none"},
+      "paint": {"fill-color": "rgba(0, 193, 255, 1)", "fill-opacity": 0}
     },
     {
       "id": "dzk",
@@ -167,12 +196,12 @@
       "type": "fill",
       "source": "dzk_pzf",
       "source-layer": "pzf_data",
+      "layout": {"visibility": "none"},
       "paint": {
         "fill-color": "rgba(30, 92, 0, 0.5)",
         "fill-antialias": true,
         "fill-outline-color": "rgba(32, 32, 32, 0.5)"
-      },
-      "layout": {"visibility": "none"}
+      }
     }
   ],
   "id": "positron"

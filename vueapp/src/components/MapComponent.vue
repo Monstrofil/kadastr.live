@@ -6,6 +6,12 @@
         @download="onDownloadClick"
         ref="searchBox"
     />
+
+    <component
+        :is="selectedItem !== null ? renderer[selectedItem.sourceLayer] : 'ParcelInfo'"
+        :feature="selectedItem"
+        :is_touchable="false"
+        id="popup-content"/>
   </div>
 
 </template>
@@ -14,10 +20,14 @@ import mapboxgl from "mapbox-gl";
 import { ref } from "vue";
 import {layerControlGrouped} from "@/layerControlGrouped";
 import SearchBox from "@/components/SearchBox";
+import ParcelInfo from "@/components/ParcelInfo";
+import NatureInfo from "@/components/NatureInfo";
+import IndexInfo from "@/components/IndexInfo";
 
 export default {
   name: 'MapComponent',
   components: {
+    ParcelInfo,
     SearchBox
   },
   props: {
@@ -40,7 +50,9 @@ export default {
   },
   setup() {
     const searchBox = ref(null);
-    return { searchBox };
+    const pzfInfo = ref(null);
+
+    return { searchBox, pzfInfo };
   },
   data() {
     return {
@@ -48,7 +60,14 @@ export default {
       popup: null,
       isDownloadAvailable: null,
       ignoreClick: null,
-      touchInsideParcel: null
+      touchInsideParcel: null,
+      selectedItem: null,
+      renderer: {
+        'land_polygons': ParcelInfo,
+        'pzf_data': NatureInfo,
+        'index_data': IndexInfo,
+        null: NatureInfo,
+      }
     }
   },
   methods: {
@@ -70,56 +89,47 @@ export default {
       })
     },
     highlightParcels(e) {
+      const features = this.map.queryRenderedFeatures(e.point);
+      if(!features){
+        this.selectedItem = null;
+        return
+      }
+      this.selectedItem = features[0];
+      console.log('Selected: ', this.selectedItem)
       this.enter_point(e);
       // Change the cursor style as a UI indicator.
       this.map.getCanvas().style.cursor = 'pointer';
 
       if (this.highlightedParcels) {
-        this.highlightedParcels.forEach((featureId) => {
+        this.highlightedParcels.forEach((feature) => {
           this.map.setFeatureState(
-              {source: 'cadastr', id: featureId, sourceLayer: 'land_polygons'},
+              {source: feature.source, id: feature.id, sourceLayer: this.selectedItem.sourceLayer},
               {hover: false}
           );
         })
       }
 
       this.highlightedParcels = [];
-      e.features.forEach((feature) => {
+      features.forEach((feature) => {
         this.map.setFeatureState(
-            {source: 'cadastr', id: feature.id, sourceLayer: 'land_polygons'},
+            {source: feature.source, id: feature.id, sourceLayer: this.selectedItem.sourceLayer},
             {hover: true}
         );
-        this.highlightedParcels.push(feature.id)
+        this.highlightedParcels.push(feature)
       })
     },
     enter_point: function (e) {
         var coordinates = e.lngLat;
-        var description = 'Номер: ' + e.features[0].properties.cadnum;
-        if (e.features[0].properties.address) {
-            description += '<br>Адреса: ' + e.features[0].properties.address;
-        }
-        if (e.features[0].properties.purpose_code) {
-            description += '<br>Призначення: ' + e.features[0].properties.purpose_code;
-        }
-        if (e.features[0].properties.category) {
-            description += '<br>Категорія: ' + e.features[0].properties.category;
-        }
-        if (e.features[0].properties.ownership) {
-            description += '<br>Власність: ' + e.features[0].properties.ownership;
-        }
-
-        if (e.type === 'touchend') {
-          description += '<br><a class="btn btn-light" role="button" target="_blank" href="/parcel/' + e.features[0].properties.cadnum + '">' +
-              'Детальніше' +
-              '</a>';
-        }
 
         // Populate the popup and set its coordinates
         // based on the feature found.
-        this.popup.setLngLat(coordinates).setHTML(description).addTo(this.map);
+        this.popup
+            .setLngLat(coordinates)
+            .addTo(this.map);
     },
 
     leave_point: function() {
+        this.selectedItem = null;
         this.popup.remove();
     }
   },
@@ -139,6 +149,8 @@ export default {
           closeOnClick: false,
           focusAfterOpen: true
       });
+      this.popup
+            .setDOMContent(document.getElementById('popup-content'))
 
       var config = {
         collapsed: false,
@@ -241,19 +253,27 @@ export default {
             directory: "Оверлей"
           },
           {
+            id: "dzk__index_map_lines",
+            chain: "dzk__index_map_poly",
+            name: "Індексна карта",
+            hidden: false,
+            group: "ДЗК",
+            directory: "Оверлей"
+          },
+          {
             id: "orto-ersi",
             name: "Ортофото Ersi (2018+)",
             hidden: false,
             group: "Фонові зображення",
             directory: "Базові шари"
           },
-          {
-            id: "dzk",
-            name: "WMS шар ДЗК",
-            hidden: false,
-            group: "Фонові зображення",
-            directory: "Базові шари"
-          },
+          // {
+          //   id: "dzk",
+          //   name: "WMS шар ДЗК",
+          //   hidden: false,
+          //   group: "Фонові зображення",
+          //   directory: "Базові шари"
+          // },
           {
             id: "openstreetmap",
             name: "OpenStreetMap",
@@ -293,30 +313,38 @@ export default {
         window.open(url.href, '_blank');
       });
 
-      this.map.on('mouseleave', 'land_polygones', () => {
+
+      function mouseleave_layer() {
         if(this.ignoreClick) {
           return
         }
         this.leave_point();
-        this.$emit('unselected');
         this.map.getCanvas().style.cursor = 'auto';
         if (this.highlightedParcels) {
-          this.highlightedParcels.forEach((featureId) => {
+          this.highlightedParcels.forEach((feature) => {
             this.map.setFeatureState(
-                {source: 'cadastr', id: featureId, sourceLayer: 'land_polygons'},
+                {source: feature.source, id: feature.id, sourceLayer: feature.sourceLayer},
                 {hover: false}
             );
           })
         }
         this.highlightedParcels = [];
-      });
-      this.map.on('touchend', 'land_polygones', (e) => {
+      }
+      this.map.on('mouseleave', 'land_polygones', mouseleave_layer.bind(this));
+      this.map.on('mouseleave', 'dzk__pzf', mouseleave_layer.bind(this));
+      this.map.on('mouseleave', 'dzk__index_map_poly', mouseleave_layer.bind(this));
+
+      function touchend_layer(e) {
         this.touchInsideParcel = true;
         if(this.ignoreClick) {
           this.highlightParcels(e);
         }
-      })
-      this.map.on('touchend', () => {
+      }
+      this.map.on('touchend', 'land_polygones', touchend_layer.bind(this))
+      this.map.on('touchend', 'dzk__pzf', touchend_layer.bind(this))
+      this.map.on('touchend', 'dzk__index_map_poly', touchend_layer.bind(this))
+
+      function touchend() {
         if(this.touchInsideParcel){
           this.touchInsideParcel = false;
           return;
@@ -324,14 +352,18 @@ export default {
         if(this.ignoreClick) {
           this.leave_point()
         }
-      })
-      this.map.on('mousemove', 'land_polygones', (e) => {
+      }
+      this.map.on('touchend', touchend.bind(this))
+
+      function mousemove(e) {
         if(this.ignoreClick) {
           return
         }
         this.highlightParcels(e);
-        this.$emit('selected', e.features);
-      });
+      }
+      this.map.on('mousemove', 'land_polygones', mousemove.bind(this));
+      this.map.on('mousemove', 'dzk__pzf', mousemove.bind(this));
+      this.map.on('mousemove', 'dzk__index_map_poly', mousemove.bind(this));
     });
   }
 }
@@ -370,7 +402,7 @@ export default {
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 650px) {
   .mgl-layerControl {
     margin: 45px 10px 0 0 !important;
     width: 300px;
@@ -383,14 +415,19 @@ export default {
 }
 
 @media (min-width: 650px) {
-  .mgl-layerControl {
-    width: 400px !important;
+  /*.mgl-layerControl {*/
+  /*  width: 400px !important;*/
+  /*}*/
+
+  /*.mgl-layerControl.hiddenRight {*/
+  /*  margin-right: calc(-100% + 50px) !important;*/
+  /*  width: 100%;*/
+  /*}*/
+
+  .mgl-breadcrumb {
+    display: none !important;
   }
 
-  .mgl-layerControl.hiddenRight {
-    margin-right: calc(-100% + 50px) !important;
-    width: 100%;
-  }
 }
 @media (min-width: 1600px) {
   .mgl-layerControl {
@@ -460,6 +497,10 @@ export default {
 
 input.slide-toggle {
   align-self: center;
+}
+
+.mapboxgl-popup {
+  max-width: 300px !important;
 }
 
 
