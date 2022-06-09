@@ -107,7 +107,7 @@ export default {
       this.search()(this.searchText);
     },
     onSearchEnded(e) {
-      if (e.relatedTarget && e.relatedTarget.className !== "mapboxgl-canvas") {
+      if (e.relatedTarget && e.relatedTarget.className !== "maplibregl-canvas") {
           return;
       }
       this.searchResults = null;

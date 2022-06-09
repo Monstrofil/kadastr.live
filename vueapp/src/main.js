@@ -3,6 +3,7 @@ import App from './App.vue'
 import {createRouter, createWebHistory} from 'vue-router'
 import VueClipboard from 'vue3-clipboard'
 import VueMapbox from '@studiometa/vue-mapbox-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import 'mapbox-gl-compare/dist/mapbox-gl-compare.css';
 

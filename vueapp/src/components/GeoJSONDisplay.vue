@@ -17,7 +17,7 @@ export default {
   mounted() {
     var map = new mapboxgl.Map({
       container: this.$refs.map_container, // Container ID
-      // style: 'mapbox://styles/mapbox/light-v9'
+      style: 'mapbox://styles/mapbox/light-v9'
     });
 
     map.on('load', () => {

@@ -1,6 +1,6 @@
 {
   "name": "vueapp",
-  "version": "0.1.14",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -19,9 +19,10 @@
     "chart.js": "^3.7.0",
     "core-js": "^3.6.5",
     "jquery": "^3.6.0",
-    "mapbox-gl": "^2.4.1",
+    "mapbox-gl": "^2.8.2",
     "mapbox-gl-compare": "^0.4.0",
     "mapbox-layer-control": "0.0.95",
+    "maplibre-gl": "=1.15.2",
     "moment": "^2.29.1",
     "popper.js": "^1.16.1",
     "v-tooltip": "^4.0.0-beta.5",

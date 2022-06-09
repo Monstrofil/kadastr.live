@@ -16,7 +16,7 @@
 
 </template>
 <script>
-import mapboxgl from "mapbox-gl";
+import maplibregl from "maplibre-gl";
 import { ref } from "vue";
 import {layerControlGrouped} from "@/layerControlGrouped";
 import SearchBox from "@/components/SearchBox";
@@ -134,7 +134,7 @@ export default {
     }
   },
   mounted() {
-    this.map = new mapboxgl.Map({
+    this.map = new maplibregl.Map({
       container: this.$refs.map,
       style: this.mapStyle,
       center: this.location,
@@ -144,7 +144,7 @@ export default {
 
     this.map.on('load', () => {
       // Create a popup, but don't add it to the map yet.
-      this.popup = new mapboxgl.Popup({
+      this.popup = new maplibregl.Popup({
           closeButton: true,
           closeOnClick: false,
           focusAfterOpen: true
@@ -291,7 +291,7 @@ export default {
 
       this.map.addControl(this.searchBox, "top-left");
       this.map.addControl(new layerControlGrouped(config), "top-right");
-      this.map.addControl(new mapboxgl.NavigationControl(), "bottom-right");
+      this.map.addControl(new maplibregl.NavigationControl(), "bottom-right");
 
       this.enableLayers.forEach((item) => {
         this.map.setLayoutProperty(item, 'visibility', 'visible')
