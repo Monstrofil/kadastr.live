@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import mapboxgl from "mapbox-gl";
+import maplibregl from "maplibre-gl";
 import * as turf from "@turf/turf";
 
 export default {
@@ -15,9 +15,9 @@ export default {
     geoFeature: null
   },
   mounted() {
-    var map = new mapboxgl.Map({
+    var map = new maplibregl.Map({
       container: this.$refs.map_container, // Container ID
-      style: 'mapbox://styles/mapbox/light-v9'
+      style: '/style/vector_style_07_06_2022.json'
     });
 
     map.on('load', () => {
@@ -49,7 +49,7 @@ export default {
           'source': 'geojson',
           'paint': {
             "fill-opacity": .8,
-            "fill-color": "rgba(41, 162, 200, 1)"
+            "fill-color": "rgb(175,0,0)"
           }
         });
       }

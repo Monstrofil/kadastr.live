@@ -120,8 +120,6 @@
 
 <script>
 
-
-import mapboxgl from "mapbox-gl";
 import DynamicModalWindows from "@/components/DynamicModalWindows";
 import {computed, provide, reactive} from "vue";
 import axios from "axios";
@@ -179,7 +177,6 @@ export default {
 
 }
 
-mapboxgl.accessToken = "pk.eyJ1IjoibW9uc3Ryb2ZpbCIsImEiOiJjazVjbHc0ZWoxczNpM2xsamlsb2Vla3U3In0.D_AounEf87Va3Zq6Z8tTsg";
 </script>
 
 <style>

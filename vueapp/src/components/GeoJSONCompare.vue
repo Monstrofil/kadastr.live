@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import mapboxgl from "mapbox-gl";
+import maplibregl from "maplibre-gl";
 import Compare from "mapbox-gl-compare";
 import * as turf from "@turf/turf";
 
@@ -20,9 +20,9 @@ export default {
     rightGeoJson: null
   },
   mounted() {
-    var before = new mapboxgl.Map({
+    var before = new maplibregl.Map({
       container: this.$refs.before, // Container ID
-      style: 'mapbox://styles/mapbox/light-v9'
+      style: '/style/vector_style_07_06_2022.json'
     });
 
     before.on('load', () => {
@@ -66,9 +66,9 @@ export default {
 
     });
 
-    var after = new mapboxgl.Map({
+    var after = new maplibregl.Map({
       container: this.$refs.after, // Container ID
-      style: 'mapbox://styles/mapbox/light-v9'
+      style: '/style/vector_style_07_06_2022.json'
     });
 
     after.on('load', () => {

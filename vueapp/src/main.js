@@ -2,7 +2,6 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import {createRouter, createWebHistory} from 'vue-router'
 import VueClipboard from 'vue3-clipboard'
-import VueMapbox from '@studiometa/vue-mapbox-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import 'mapbox-gl-compare/dist/mapbox-gl-compare.css';
@@ -10,7 +9,6 @@ import 'mapbox-gl-compare/dist/mapbox-gl-compare.css';
 import axios from 'axios';
 import './assets/styles.scss'
 import DynamicModalWindows from "@/components/DynamicModalWindows";
-import Mapbox from "mapbox-gl";
 import AboutPageComponent from "@/components/AboutPageComponent";
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 import BounceLoader from 'vue-spinner/src/BounceLoader.vue';
@@ -51,7 +49,7 @@ app.use(VueClipboard, {
 app.component('DynamicModalWindows', DynamicModalWindows);
 app.component('PulseLoader', PulseLoader);
 app.component('BounceLoader', BounceLoader);
-app.use(VueMapbox, { mapboxgl: Mapbox });
+// app.use(VueMapbox, { mapboxgl: Mapbox });
 app.mount('#app');
 
 
