@@ -27,6 +27,27 @@ filepath = "/static/pzf.gpkg"
 			!BBOX!
 	"""
 
+[[providers]]
+name = "index_gpkg"
+type = "gpkg"
+filepath = "/static/index_db.gpkg"
+
+	[[providers.layers]]
+	name = "index_data"
+	srid = 4326
+	sql = """
+		SELECT
+			fid, geom,
+			koatuu, zona, kvart, add_date, layer,
+			si.minx, si.miny, si.maxx, si.maxy
+		FROM
+			index_map lp
+		JOIN
+			rtree_index_map_geom si ON lp.fid = si.id
+		WHERE
+			!BBOX!
+	"""
+
 # register data providers
 [[mvt_providers]]
 name = "kadastr"
@@ -100,6 +121,14 @@ name = "dzk_pzf"
   max_zoom = 20
 
 [[maps]]
+name = "dzk_index_map"
+
+  [[maps.layers]]
+  provider_layer = "index_gpkg.index_data"
+  min_zoom = 11
+  max_zoom = 24
+
+[[maps]]
 name = "kadastr"
 
   [[maps.layers]]
@@ -118,6 +147,6 @@ name = "kadastr"
   max_zoom = 7
 
 [cache]
-  max_zoom = 13
+  max_zoom = 16
   type = "file"
   basepath = "cache"
