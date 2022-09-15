@@ -1,0 +1,127 @@
+{
+  "version": 8,
+  "name": "cadaster",
+  "metadata": {"maputnik:renderer": "mbgljs"},
+  "sources": {
+    "cadastr": {
+      "type": "vector",
+      "url": "https://kadastr.live/tiles/capabilities/kadastr.json",
+      "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
+    },
+    "dzk_pzf": {
+      "type": "vector",
+      "url": "https://kadastr.live/tiles/capabilities/dzk_pzf.json",
+      "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
+    },
+    "dzk_index_map": {
+      "type": "vector",
+      "url": "https://kadastr.live/tiles/capabilities/dzk_index_map.json",
+      "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
+    },
+    "raster-tiles": {
+      "type": "raster",
+      "tiles": [
+        "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      ],
+      "tileSize": 256,
+      "attribution": "OpenStreetMap contributors",
+      "maxzoom": 19
+    },
+    "arcgis-world-imagery-ZYX": {
+      "type": "raster",
+      "tiles": [
+        "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+      ],
+      "tileSize": 256,
+      "attribution": "Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community",
+      "maxzoom": 17
+    },
+    "orto-tiles": {
+      "type": "raster",
+      "tiles": [
+        "https://tiles.kadastr.live/geoserver/kadastr/wms?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=tiffs"
+      ],
+      "tileSize": 256,
+      "attribution": "DZK",
+      "maxzoom": 19
+    },
+    "wms-kadastr-source": {
+      "type": "raster",
+      "tiles": [
+        "https://m1.land.gov.ua/geowebcache/service/wms?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=kadastr"
+      ],
+      "tileSize": 256,
+      "attribution": "ДЗК",
+      "maxzoom": 16
+    },
+    "dummy": {
+      "type": "geojson",
+      "data": {"type": "FeatureCollection", "features": []}
+    }
+  },
+  "glyphs": "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
+  "layers": [
+    {
+      "id": "openstreetmap",
+      "type": "raster",
+      "source": "raster-tiles",
+      "minzoom": 0,
+      "maxzoom": 22,
+      "layout": {"visibility": "visible"}
+    },
+    {
+      "id": "orto-ersi",
+      "type": "raster",
+      "source": "arcgis-world-imagery-ZYX",
+      "minzoom": 0,
+      "maxzoom": 22,
+      "layout": {"visibility": "none"}
+    },
+    {
+      "id": "orto-tiles",
+      "type": "raster",
+      "source": "orto-tiles",
+      "minzoom": 0,
+      "maxzoom": 22,
+      "layout": {"visibility": "none"}
+    },
+    {
+      "id": "dzk__index_map_lines",
+      "type": "line",
+      "source": "dzk_index_map",
+      "source-layer": "index_data",
+      "minzoom": 0,
+      "layout": {
+        "visibility": "none",
+        "line-cap": "butt",
+        "line-join": "bevel",
+        "line-round-limit": 2
+      },
+      "paint": {
+        "line-color": "rgba(0, 40, 251,  0.7)",
+        "line-gap-width": 0,
+        "line-blur": 2,
+        "line-width": {"stops": [[10, 0.5], [13, 2], [16, 4]]}
+      }
+    },
+    {
+      "id": "dzk__index_map_poly",
+      "type": "fill",
+      "source": "dzk_index_map",
+      "source-layer": "index_data",
+      "layout": {"visibility": "none"},
+      "paint": {"fill-color": "rgba(0, 193, 255, 1)", "fill-opacity": 0}
+    },
+    {
+      "id": "dzk",
+      "type": "raster",
+      "source": "wms-kadastr-source",
+      "minzoom": 0,
+      "maxzoom": 22,
+      "layout": {"visibility": "none"}
+    }
+  ],
+  "id": "positron"
+}

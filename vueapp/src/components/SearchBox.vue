@@ -6,7 +6,7 @@
     <div class="row d-flex justify-content-center align-items-center">
       <div class="col-md-12">
         <div class="search autocomplete">
-          <div class="form" >
+          <div class="form">
             <i class="fa fa-search"></i>
             <input type="text"
                    class="form-control form-input"
@@ -14,8 +14,10 @@
                    @input="onSearchChanged"
                    v-model="searchText"
                    placeholder="Введіть дані для пошуку...">
-            <span class="left-pan">
+            <span class="stick-right">
+              <span class="left-pan">
               <VTooltip
+
                   :offset="[0, 16]"
               >
                 <a target="_blank" href="#" @click.prevent="downloadGeoJson">
@@ -30,13 +32,37 @@
               </VTooltip>
 
             </span>
+            <span class="left-pan">
+              <VDropdown
+                  :offset="[0, 16]"
+              >
+                <a style="cursor: pointer">
+                  <i class="fa fa-exclamation-triangle fa-warning"></i>
+                </a>
+
+                <!-- This will be the content of the popover -->
+                <template #popper>
+                  <div style="max-width: 350px; word-break: break-word">
+                    Увага! Останнє оновлення даних відбулось <b>19 лютого 2022 р. о 21:14</b>.
+                    Подальші оновлення неможливі через блокування
+                    <a href="http://wikimap.dzk.gov.ua/wiki/API_%D0%95-%D1%81%D0%B5%D1%80%D0%B2%D1%96%D1%81%D0%B8">API ДЗК</a>
+                    на час воєнного стану.<br>
+                    <br>Звертаємо також увагу на те, що сервіс не є офіційним джерелом та не має використовуватись у професійній діяльності.
+                  </div>
+                </template>
+              </VDropdown>
+
+            </span>
+            </span>
+
           </div>
           <ul class="autocomplete-results" v-if="searchResults">
             <li class="autocomplete-result" v-for="result in searchResults.results" :key="result">
               <a class="autocomplete-link" href="#" @click="onSelectParcel(result)">
                 <div class="cadnum_result_data">{{ result.cadnum }}</div>
-                <div class="address_result_data"><b>Адреса: </b>{{ result.address ? result.address: 'Дані відсутні' }}</div>
-<!--                <div class="use_result_data" v-if="result.use"><b>Використання: </b>{{ result.use }}</div>-->
+                <div class="address_result_data"><b>Адреса: </b>{{ result.address ? result.address : 'Дані відсутні' }}
+                </div>
+                <!--                <div class="use_result_data" v-if="result.use"><b>Використання: </b>{{ result.use }}</div>-->
                 <div class="area_result_data">{{ result.area }} {{ result.unit_area }}</div>
               </a>
             </li>
@@ -97,7 +123,7 @@ export default {
     search() {
       return this.debounce((searchText) => {
         axios.get(
-          `/search/${searchText}`
+            `/search/${searchText}`
         ).then(response => {
           this.searchResults = response.data;
         });
@@ -108,7 +134,7 @@ export default {
     },
     onSearchEnded(e) {
       if (e.relatedTarget && e.relatedTarget.className !== "maplibregl-canvas") {
-          return;
+        return;
       }
       this.searchResults = null;
     }
@@ -166,20 +192,22 @@ export default {
   color: #9ca3af
 }
 
-.form span {
+.form .left-pan {
+  display: inline-block;
+  border-left: 1px solid #d1d5db;
+  margin-right: 1px;
+}
+
+.form .stick-right {
   position: absolute;
-  right: 17px;
+  right: 7px;
   top: 10px;
   padding: 2px;
-  border-left: 1px solid #d1d5db
 }
 
 .left-pan {
-  padding-left: 7px
-}
-
-.left-pan i {
-  padding-left: 10px
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .form-input {
@@ -192,6 +220,11 @@ export default {
 .form-input:focus {
   box-shadow: none;
   border: none
+}
+
+.fa-warning {
+  color: #ff9966;
+  font-size: 120%;
 }
 
 </style>
