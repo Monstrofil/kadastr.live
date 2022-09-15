@@ -1,8 +1,10 @@
+import csv
+import itertools
 import json
 import re
 
 from django.db import connections
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, View, ListView
 from prometheus_client import generate_latest, Gauge
@@ -85,6 +87,89 @@ class ExportGeoJsonView(View):
         response = HttpResponse(json.dumps(row[0]), content_type="application/json")
         response['Content-Disposition'] = 'attachment; filename=export.geojson'
         return response
+
+
+class ExportCsvView(View):
+    DEFAULT_FIELDS = ('landuse.cadnum', )
+    AVAILABLE_FIELDS = (
+        'landuse.cadnum',
+        'category',
+        'purpose_code',
+        'purpose',
+        'use',
+        'area',
+        'unit_area',
+        'ownershipcode',
+        'ownership',
+        'address',
+    )
+    GEOMETRY_FUNC = 'ST_AsGeoJSON'
+    ALLOWED_GEOMETRY_FUNC = (
+        GEOMETRY_FUNC,
+        'ST_AsText'
+    )
+
+    class Echo:
+        """
+        An object that implements just the write method of the file-like
+        interface.
+        """
+
+        def write(self, value):
+            """
+            Write the value by returning it, instead of storing in a buffer.
+            """
+            return value
+
+    def get(self, request, boundary_id, *args, **kwargs):
+
+        fields = self.DEFAULT_FIELDS
+        if request.GET.get('fields'):
+            fields = tuple(request.GET['fields'].split(','))
+            if not set(fields).issubset(self.AVAILABLE_FIELDS):
+                raise RuntimeError('Unsupported geometry func')
+
+        geometry_func = self.GEOMETRY_FUNC
+        if request.GET.get('geometry_func'):
+            geometry_func = request.GET['geometry_func']
+            if geometry_func not in self.ALLOWED_GEOMETRY_FUNC:
+                raise RuntimeError('Unsupported geometry func')
+
+        sql = f"""
+            SELECT  
+                {', '.join(fields)},
+                {geometry_func}(geometry) as geometry
+            FROM landuse 
+            LEFT JOIN cadinfo_address ON landuse.cadnum = cadinfo_address.cadnum
+            WHERE revision = (
+                SELECT id
+                FROM cadinfo_update
+                WHERE status = 'success'
+                ORDER BY id DESC
+                LIMIT 1
+            ) AND geometry && (SELECT geometry FROM boundaries WHERE id=%s)
+              AND ST_Intersects(geometry::geometry, (SELECT geometry FROM boundaries WHERE id=%s)) 
+        """
+        with connections['default'].cursor() as cursor:
+            cursor.execute(sql, [boundary_id, boundary_id])
+
+            pseudo_buffer = self.Echo()
+            writer = csv.writer(pseudo_buffer)
+
+            all_fields = fields + ('geometry', )
+
+            rows_iterable = itertools.chain(
+                (writer.writerow(all_fields), ),
+                (writer.writerow(row) for row in cursor.fetchall())
+            )
+
+            response = StreamingHttpResponse(
+                rows_iterable,
+                content_type="text/csv",
+            )
+            response['Content-Disposition'] = 'attachment; filename="export.csv"'
+
+            return response
 
 
 class SearchView(View):

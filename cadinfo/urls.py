@@ -6,7 +6,7 @@ from rest_framework import routers
 from .api import ParcelView, UpdateView
 from .sitemaps import LanduseSitemap
 from .views import LandInfoView, IndexView, ExportGeoJsonView, SearchView, MetricsView, \
-    TegolaConfigView
+    TegolaConfigView, ExportCsvView
 
 sitemaps = {
     'static': LanduseSitemap,
@@ -22,6 +22,7 @@ urlpatterns = [
     path('metrics/', MetricsView.as_view(), name='metrics'),
     path('parcel/<str:cad_num>', LandInfoView.as_view(), name='cad_info'),
     path('export/<left>/<bottom>/<right>/<top>/', ExportGeoJsonView.as_view()),
+    path('api/csv/<boundary_id>/', ExportCsvView.as_view()),
     path('search/<search>/', SearchView.as_view()),
     path('sitemap.xml', index, {'sitemaps': sitemaps}),
     path('sitemap-<section>.xml', cache_page(3600)(sitemap), {'sitemaps': sitemaps},
