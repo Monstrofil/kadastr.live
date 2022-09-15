@@ -25,4 +25,8 @@ else
 fi
 
 # Start Uvicorn with live reload
+if [ "${LOG_LEVEL}" -eq "DEBUG" ]; then
 exec uvicorn --reload --host $HOST --port $PORT --log-level $LOG_LEVEL "$APP_MODULE" --interface wsgi
+else
+exec uvicorn --workers 8 --host $HOST --port $PORT --log-level $LOG_LEVEL "$APP_MODULE" --interface wsgi
+fi
