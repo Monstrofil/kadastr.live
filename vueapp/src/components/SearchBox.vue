@@ -16,43 +16,56 @@
                    placeholder="Введіть дані для пошуку...">
             <span class="stick-right">
               <span class="left-pan">
-              <VTooltip
+                <VTooltip
 
-                  :offset="[0, 16]"
-              >
-                <a target="_blank" href="#" @click.prevent="downloadGeoJson">
-                  <i class="fa fa-download"></i>
-                </a>
+                    :offset="[0, 16]"
+                >
+                  <a target="_blank" href="#" @click.prevent="downloadGeoJson">
+                    <i class="fa fa-download"></i>
+                  </a>
 
-                <!-- This will be the content of the popover -->
-                <template #popper>
-                  Завантажити геометрію у вигляді GeoJson файлу.
-                  <span v-if="! downloadAvailable" class="button-error">Наблизьте мапу для завантаження</span>
-                </template>
-              </VTooltip>
+                  <!-- This will be the content of the popover -->
+                  <template #popper>
+                    Завантажити геометрію у вигляді GeoJson файлу.
+                    <span v-if="! downloadAvailable" class="button-error">Наблизьте мапу для завантаження</span>
+                  </template>
+                </VTooltip>
 
-            </span>
-            <span class="left-pan">
-              <VDropdown
-                  :offset="[0, 16]"
-              >
-                <a style="cursor: pointer">
-                  <i class="fa fa-exclamation-triangle fa-warning"></i>
-                </a>
+              </span>
+              <span class="left-pan">
+                <VTooltip
+                    :offset="[0, 16]"
+                >
+                  <a style="cursor: pointer">
+                    <i class="fa fa-exclamation-triangle fa-warning"></i>
+                  </a>
 
-                <!-- This will be the content of the popover -->
-                <template #popper>
-                  <div style="max-width: 350px; word-break: break-word">
-                    Увага! Останнє оновлення даних відбулось <b>19 лютого 2022 р. о 21:14</b>.
-                    Подальші оновлення неможливі через блокування
-                    <a href="http://wikimap.dzk.gov.ua/wiki/API_%D0%95-%D1%81%D0%B5%D1%80%D0%B2%D1%96%D1%81%D0%B8">API ДЗК</a>
-                    на час воєнного стану.<br>
-                    <br>Звертаємо також увагу на те, що сервіс не є офіційним джерелом та не має використовуватись у професійній діяльності.
-                  </div>
-                </template>
-              </VDropdown>
+                  <!-- This will be the content of the popover -->
+                  <template #popper>
+                    <div style="max-width: 350px; word-break: break-word">
+                      Увага! Останнє оновлення даних відбулось <b>19 лютого 2022 р. о 21:14</b>.
+                      Подальші оновлення неможливі через блокування
+                      API ДЗК на час воєнного стану.<br>
+                      <br>Звертаємо також увагу на те, що сервіс не є офіційним джерелом та не має використовуватись у професійній діяльності.
+                    </div>
+                  </template>
+                </VTooltip>
 
-            </span>
+              </span>
+              <span class="left-pan">
+                <VTooltip
+                    :offset="[0, 16]"
+                >
+                  <a style="cursor: pointer">
+                    <i class="fa fa-info-circle"></i>
+                  </a>
+
+                  <template #popper>
+                    Інформація про проект
+                  </template>
+                </VTooltip>
+
+              </span>
             </span>
 
           </div>
@@ -208,6 +221,8 @@ export default {
 .left-pan {
   padding-left: 10px;
   padding-right: 10px;
+
+  font-size: 120%;
 }
 
 .form-input {
@@ -224,7 +239,6 @@ export default {
 
 .fa-warning {
   color: #ff9966;
-  font-size: 120%;
 }
 
 </style>
