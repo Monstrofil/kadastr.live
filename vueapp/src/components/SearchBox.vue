@@ -56,9 +56,9 @@
                 <VTooltip
                     :offset="[0, 16]"
                 >
-                  <a style="cursor: pointer">
+                  <router-link to="/about">
                     <i class="fa fa-info-circle"></i>
-                  </a>
+                  </router-link>
 
                   <template #popper>
                     Інформація про проект
