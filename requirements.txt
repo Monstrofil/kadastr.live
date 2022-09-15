@@ -6,6 +6,7 @@ prometheus_client
 retry.it
 cachetools
 djangorestframework-filters==1.0.0.dev2
+djangorestframework-xml
 djangorestframework==3.12.4
 djangorestframework-gis==0.17
 django-utils-six==2.0
