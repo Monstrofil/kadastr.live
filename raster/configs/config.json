@@ -1,0 +1,23 @@
+{
+  "options": {
+    "paths": {
+        "root": "/data",
+        "mbtiles": "/data"
+    },
+    "serveStaticMaps": true,
+    "formatQuality": {
+      "jpeg": 90,
+      "webp": 90
+    },
+    "maxSize": 8192,
+    "pbfAlias": "pbf"
+  },
+  "styles": {
+    "parcels": {
+      "style": "/layers/parcels_layer.json"
+    },
+    "kmplus": {
+      "style": "/layers/roads_layer.json"
+    }
+  }
+}

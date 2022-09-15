@@ -36,6 +36,20 @@ services:
       - "traefik.http.middlewares.cors.headers.addvaryheader=true"
       - "containers.group=kadastr.live"
 
+  raster:
+    build: raster
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.raster.rule=PathPrefix(`/tiles/raster`)"
+      - "traefik.http.routers.raster.entrypoints=web,websecure"
+      - "traefik.http.routers.raster.middlewares=cors,raster-stripprefix"
+      - "traefik.http.middlewares.raster-stripprefix.stripprefix.prefixes=/tiles/raster"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cors.headers.addvaryheader=true"
+      - "containers.group=kadastr.live"
+    command: ["-p", "80", "-c", "/configs/config.json", "--public_url", "https://kadastr.live/tiles/raster"]
+
   nginx:
     build: vueapp
     restart: unless-stopped
@@ -46,6 +60,9 @@ services:
       - "traefik.http.routers.nginx.rule=PathPrefix(`/`)"
       - "traefik.http.routers.nginx.entrypoints=web,websecure"
       - "traefik.http.routers.nginx.priority=-1"
+      - "traefik.http.routers.nginx.middlewares=cors"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cors.headers.addvaryheader=true"
       - "containers.group=kadastr.live"
 
   webserver:
@@ -53,8 +70,8 @@ services:
     restart: unless-stopped
     environment:
       - APP_MODULE=cadastr.wsgi:application
-      - DEBUG
-      - LOG_LEVEL=debug
+#      - DEBUG
+#      - LOG_LEVEL=debug
       - SQL_HOST
       - SQL_USER
       - SQL_PASS
@@ -68,6 +85,9 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.webserver.rule=PathPrefix(`/api`) || PathPrefix(`/admin`) || PathPrefix(`/__debug__`) || PathPrefix(`/media`) || PathPrefix(`/static`) || PathPrefix(`/export`) || PathPrefix(`/search`) "
       - "traefik.http.routers.webserver.entrypoints=web,websecure"
+      - "traefik.http.routers.webserver.middlewares=cors"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cors.headers.addvaryheader=true"
       - "containers.group=kadastr.live"
 
   traefik:
