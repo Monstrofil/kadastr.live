@@ -6,6 +6,16 @@
         @download="onDownloadClick"
         ref="searchBox"
     />
+    <FilterToggleButton
+        ref="filterToggle"
+    />
+
+    <WrapperOffcanvas>
+      <template v-slot:title>Фільтр</template>
+      <template v-slot:default>
+        <div ref="filterContainer"></div>
+      </template>
+    </WrapperOffcanvas>
 
     <component
         :is="selectedItem !== null ? renderer[selectedItem.sourceLayer] : 'ParcelInfo'"
@@ -23,10 +33,14 @@ import SearchBox from "@/components/SearchBox";
 import ParcelInfo from "@/components/ParcelInfo";
 import NatureInfo from "@/components/NatureInfo";
 import IndexInfo from "@/components/IndexInfo";
+import WrapperOffcanvas from "@/components/WrapperOffcanvas";
+import FilterToggleButton from "@/components/FilterToggleButton";
 
 export default {
   name: 'MapComponent',
   components: {
+    FilterToggleButton,
+    WrapperOffcanvas,
     ParcelInfo,
     SearchBox
   },
@@ -50,9 +64,10 @@ export default {
   },
   setup() {
     const searchBox = ref(null);
+    const filterToggle = ref(null);
     const pzfInfo = ref(null);
 
-    return { searchBox, pzfInfo };
+    return { searchBox, pzfInfo, filterToggle };
   },
   data() {
     return {
@@ -290,7 +305,14 @@ export default {
       });
 
       this.map.addControl(this.searchBox, "top-left");
-      this.map.addControl(new layerControlGrouped(config), "top-right");
+      this.map.addControl(this.filterToggle, "top-right");
+
+      this.filterBox = new layerControlGrouped(config);
+      const element = this.filterBox.onAdd(this.map);
+
+      this.$refs.filterContainer.appendChild(element);
+
+      // this.map.addControl(new layerControlGrouped(config), "top-right");
       this.map.addControl(new maplibregl.NavigationControl(), "bottom-right");
 
       this.enableLayers.forEach((item) => {
@@ -392,54 +414,14 @@ export default {
   }
 }
 
-  .mapboxgl-ctrl-top-right {
-    /*width: 500px;*/
-  }
 
 @media (min-width: 650px) {
-  .mapboxgl-ctrl-top-right {
-    display: block;
-  }
-}
-
-@media (max-width: 650px) {
-  .mgl-layerControl {
-    margin: 45px 10px 0 0 !important;
-    width: 300px;
-  }
-
-  .mgl-layerControl.hiddenRight {
-    margin-right: calc(-100% + 50px) !important;
-    width: 100%;
-  }
-}
-
-@media (min-width: 650px) {
-  /*.mgl-layerControl {*/
-  /*  width: 400px !important;*/
-  /*}*/
-
-  /*.mgl-layerControl.hiddenRight {*/
-  /*  margin-right: calc(-100% + 50px) !important;*/
-  /*  width: 100%;*/
-  /*}*/
-
   .mgl-breadcrumb {
     display: none !important;
   }
 
 }
 @media (min-width: 1600px) {
-  .mgl-layerControl {
-    margin: 65px 10px 0 0 !important;
-    width: 450px !important;
-  }
-
-  .mgl-layerControl.hiddenRight {
-    margin: 65px 10px 0 0 !important;
-    width: 450px !important;
-  }
-
   .mgl-breadcrumb {
     display: none !important;
   }
@@ -449,36 +431,21 @@ export default {
   }
 }
 
-@media (min-width: 750px) {
-  .mapboxgl-ctrl-top-right {
-    /*width: 300px;*/
-  }
-}
-@media (min-width: 1250px) {
-  .mapboxgl-ctrl-top-right {
-    /*width: 500px;*/
-  }
-}
-
 .mgl-layerControl {
-  max-width: calc(100vw - 90px) !important;
+  max-width: 100%;
   overflow: visible !important;
   transition: margin 700ms;
 
-  overflow-y: scroll !important;
-  max-height: calc(100vh - 100px);
+  /*overflow-y: scroll !important;*/
+  /*max-height: calc(100vh - 100px);*/
 
   background: transparent;
   box-shadow: none !important;
 }
 
-.mgl-layerControl.hiddenRight {
-    overflow-y: hidden !important;
-}
-
-.mgl-layerControlDirectory {
-  margin-left: 50px;
-}
+/*.mgl-layerControlDirectory {*/
+/*  margin-left: 50px;*/
+/*}*/
 
 .mgl-breadcrumb {
   display: block;
