@@ -17,6 +17,11 @@
       </template>
     </WrapperOffcanvas>
 
+    <div class="mapboxgl-ctrl mapboxgl-ctrl-bottom-left" style="background-color: white; padding: 15px;">
+
+      <TerhromadInfo :feature="selectedATU" v-if="selectedATU"></TerhromadInfo>
+    </div>
+
     <component
         :is="selectedItem !== null ? renderer[selectedItem.sourceLayer] : 'ParcelInfo'"
         :feature="selectedItem"
@@ -35,10 +40,12 @@ import NatureInfo from "@/components/NatureInfo";
 import IndexInfo from "@/components/IndexInfo";
 import WrapperOffcanvas from "@/components/WrapperOffcanvas";
 import FilterToggleButton from "@/components/FilterToggleButton";
+import TerhromadInfo from "@/components/TerhromadInfo";
 
 export default {
   name: 'MapComponent',
   components: {
+    TerhromadInfo,
     FilterToggleButton,
     WrapperOffcanvas,
     ParcelInfo,
@@ -77,10 +84,12 @@ export default {
       ignoreClick: null,
       touchInsideParcel: null,
       selectedItem: null,
+      selectedATU: null,
       renderer: {
         'land_polygons': ParcelInfo,
         'pzf_data': NatureInfo,
         'index_data': IndexInfo,
+        // 'atu_terhromad_data': TerhromadInfo,
         null: NatureInfo,
       }
     }
@@ -104,13 +113,30 @@ export default {
       })
     },
     highlightParcels(e) {
-      const features = this.map.queryRenderedFeatures(e.point);
-      if(!features){
+      let features = this.map.queryRenderedFeatures(e.point);
+
+      // lookup for atu information
+      features.forEach((feature) => {
+        if (feature && feature.sourceLayer === 'atu_terhromad_data'){
+          this.selectedATU = feature;
+        }
+      })
+
+      // check for all other tooltipped items
+      function filterFeatures(feature) {
+        if(feature) {
+          return this.renderer[feature.sourceLayer] !== undefined
+        }
+        return false;
+      }
+      features = features.filter(filterFeatures.bind(this));
+
+      if(features.length === 0){
         this.selectedItem = null;
         return
       }
       this.selectedItem = features[0];
-      console.log('Selected: ', this.selectedItem)
+
       this.enter_point(e);
       // Change the cursor style as a UI indicator.
       this.map.getCanvas().style.cursor = 'pointer';
@@ -146,6 +172,12 @@ export default {
     leave_point: function() {
         this.selectedItem = null;
         this.popup.remove();
+    },
+
+    leave_atu: function (e) {
+      console.log('leave', e)
+
+        this.selectedATU = null;
     }
   },
   mounted() {
@@ -296,6 +328,30 @@ export default {
             group: "Фонові зображення",
             directory: "Базові шари"
           },
+          {
+            id: "dzk__atu_oblast",
+            chain: "dzk__atu_oblast__text",
+            name: "Межі областей",
+            hidden: false,
+            group: "АТУ",
+            directory: "АТУ"
+          },
+          {
+            id: "dzk__atu_rayon",
+            chain: "dzk__atu_rayon__text",
+            name: "Межі районів",
+            hidden: false,
+            group: "АТУ",
+            directory: "АТУ"
+          },
+          {
+            id: "dzk__atu_terhromad__line",
+            chain: "dzk__atu_terhromad__text",
+            name: "Межі громад",
+            hidden: false,
+            group: "АТУ",
+            directory: "АТУ"
+          }
         ]
       }
 
@@ -354,6 +410,7 @@ export default {
       }
       this.map.on('mouseleave', 'land_polygones', mouseleave_layer.bind(this));
       this.map.on('mouseleave', 'dzk__pzf', mouseleave_layer.bind(this));
+      this.map.on('mouseleave', 'dzk__atu_terhromad', this.leave_atu.bind(this));
       this.map.on('mouseleave', 'dzk__index_map_poly', mouseleave_layer.bind(this));
 
       function touchend_layer(e) {
@@ -364,6 +421,7 @@ export default {
       }
       this.map.on('touchend', 'land_polygones', touchend_layer.bind(this))
       this.map.on('touchend', 'dzk__pzf', touchend_layer.bind(this))
+      // this.map.on('touchend', 'dzk__atu_terhromad', touchend_layer.bind(this))
       this.map.on('touchend', 'dzk__index_map_poly', touchend_layer.bind(this))
 
       function touchend() {
@@ -385,6 +443,7 @@ export default {
       }
       this.map.on('mousemove', 'land_polygones', mousemove.bind(this));
       this.map.on('mousemove', 'dzk__pzf', mousemove.bind(this));
+      this.map.on('mousemove', 'dzk__atu_terhromad', mousemove.bind(this));
       this.map.on('mousemove', 'dzk__index_map_poly', mousemove.bind(this));
     });
   }

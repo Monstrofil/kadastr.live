@@ -22,7 +22,7 @@ export default {
   mounted() {
     var before = new maplibregl.Map({
       container: this.$refs.before, // Container ID
-      style: '/style/vector_style_07_06_2022.json'
+      style: '/style/vector_style_28_09_2022.json'
     });
 
     before.on('load', () => {
@@ -68,7 +68,7 @@ export default {
 
     var after = new maplibregl.Map({
       container: this.$refs.after, // Container ID
-      style: '/style/vector_style_07_06_2022.json'
+      style: '/style/vector_style_28_09_2022.json'
     });
 
     after.on('load', () => {

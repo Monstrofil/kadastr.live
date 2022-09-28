@@ -27,6 +27,8 @@ services:
       - SQL_PASS
       - SQL_DB
       - SQL_PORT
+    volumes:
+      - ${SPHINX_CACHE_DIR:-./tiles_cache/:/cache/}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.tiles.rule=PathPrefix(`/tiles/`)"

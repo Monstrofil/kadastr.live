@@ -17,7 +17,7 @@ export default {
   mounted() {
     var map = new maplibregl.Map({
       container: this.$refs.map_container, // Container ID
-      style: '/style/vector_style_07_06_2022.json'
+      style: '/style/vector_style_28_09_2022.json'
     });
 
     map.on('load', () => {

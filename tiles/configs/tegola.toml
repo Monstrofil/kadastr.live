@@ -28,6 +28,69 @@ filepath = "/static/pzf.gpkg"
 	"""
 
 [[providers]]
+name = "atu_oblast"
+type = "gpkg"
+filepath = "/static/oblast.gpkg"
+
+	[[providers.layers]]
+	name = "atu_oblast_data"
+	srid = 4326
+	sql = """
+		SELECT
+			fid, geom,
+			ADMIN_1,
+			si.minx, si.miny, si.maxx, si.maxy
+		FROM
+			oblast lp
+		JOIN
+			rtree_oblast_geom si ON lp.fid = si.id
+		WHERE
+			!BBOX!
+	"""
+
+[[providers]]
+name = "atu_rayon"
+type = "gpkg"
+filepath = "/static/rayon.gpkg"
+
+	[[providers.layers]]
+	name = "atu_rayon_data"
+	srid = 4326
+	sql = """
+		SELECT
+			fid, geom,
+			ADMIN_1, ADMIN_2,
+			si.minx, si.miny, si.maxx, si.maxy
+		FROM
+			rayon lp
+		JOIN
+			rtree_rayon_geom si ON lp.fid = si.id
+		WHERE
+			!BBOX!
+	"""
+
+[[providers]]
+name = "atu_terhromad"
+type = "gpkg"
+filepath = "/static/terhromad.gpkg"
+
+	[[providers.layers]]
+	name = "atu_terhromad_data"
+	srid = 4326
+	sql = """
+		SELECT
+			fid, geom,
+			ADMIN_1, ADMIN_2, ADMIN_3, TYPE, KOATUU_old,
+			si.minx, si.miny, si.maxx, si.maxy
+		FROM
+			terhromad lp
+		JOIN
+			rtree_terhromad_geom si ON lp.fid = si.id
+		WHERE
+			!BBOX!
+	"""
+
+[[providers]]
 name = "index_gpkg"
 type = "gpkg"
 filepath = "/static/index_db.gpkg"
@@ -121,6 +184,24 @@ name = "dzk_pzf"
   max_zoom = 20
 
 [[maps]]
+name = "dzk_atu"
+
+  [[maps.layers]]
+  provider_layer = "atu_oblast.atu_oblast_data"
+  min_zoom = 3
+  max_zoom = 14
+
+  [[maps.layers]]
+  provider_layer = "atu_rayon.atu_rayon_data"
+  min_zoom = 8
+  max_zoom = 20
+
+  [[maps.layers]]
+  provider_layer = "atu_terhromad.atu_terhromad_data"
+  min_zoom = 10
+  max_zoom = 20
+
+[[maps]]
 name = "dzk_index_map"
 
   [[maps.layers]]
@@ -147,6 +228,6 @@ name = "kadastr"
   max_zoom = 7
 
 [cache]
-  max_zoom = 16
+  max_zoom = 14
   type = "file"
-  basepath = "cache"
+  basepath = "/cache"

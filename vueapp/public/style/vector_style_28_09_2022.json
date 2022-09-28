@@ -13,6 +13,11 @@
       "url": "https://kadastr.live/tiles/capabilities/dzk_pzf.json",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
+    "dzk_atu": {
+      "type": "vector",
+      "url": "https://kadastr.live/tiles/capabilities/dzk_atu.json",
+      "attribution": "DZK"
+    },
     "dzk_index_map": {
       "type": "vector",
       "url": "https://kadastr.live/tiles/capabilities/dzk_index_map.json",
@@ -86,6 +91,17 @@
       "minzoom": 0,
       "maxzoom": 22,
       "layout": {"visibility": "none"}
+    },
+    {
+      "id": "dzk__atu_oblast",
+      "type": "line",
+      "source": "dzk_atu",
+      "source-layer": "atu_oblast_data",
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-color": "rgba(0, 30, 92, 0.5)",
+        "line-width": 3
+      }
     },
     {
       "id": "dzk__index_map_lines",
@@ -201,6 +217,101 @@
         "fill-color": "rgba(30, 92, 0, 0.5)",
         "fill-antialias": true,
         "fill-outline-color": "rgba(32, 32, 32, 0.5)"
+      }
+    },
+    {
+      "id": "dzk__atu_rayon",
+      "type": "line",
+      "source": "dzk_atu",
+      "source-layer": "atu_rayon_data",
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-color": "rgba(0, 0, 90, 0.5)",
+        "line-width": 2
+      }
+    },
+    {
+      "id": "dzk__atu_rayon__text",
+      "type": "symbol",
+      "source": "dzk_atu",
+      "source-layer": "atu_rayon_data",
+      "layout": {
+        "text-field": "{ADMIN_2}",
+        "visibility": "none",
+        "symbol-placement": "line",
+        "symbol-spacing": 250,
+        "text-font": [
+          "Klokantech Noto Sans Bold"
+        ],
+        "symbol-avoid-edges": true,
+        "text-allow-overlap": true,
+        "text-ignore-placement": false,
+        "text-padding": 0,
+        "text-pitch-alignment": "auto",
+        "text-rotation-alignment": "auto",
+        "text-offset": [0, 1],
+        "icon-allow-overlap": false,
+        "icon-ignore-placement": false,
+        "text-size": 14,
+        "text-keep-upright": true
+      },
+      "paint": {
+        "text-color": "rgba(0, 0, 90, 0.9)",
+        "text-halo-color": "rgba(255, 255, 255, 0.5)",
+        "text-halo-width": 1
+      }
+    },
+    {
+      "id": "dzk__atu_terhromad__line",
+      "type": "line",
+      "source": "dzk_atu",
+      "source-layer": "atu_terhromad_data",
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-color": "rgba(180, 30, 0, 0.5)",
+        "line-width": 2,
+        "line-dasharray": ["literal", [2, 2]]
+      }
+    },
+    {
+      "id": "dzk__atu_terhromad",
+      "type": "fill",
+      "source": "dzk_atu",
+      "source-layer": "atu_terhromad_data",
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "fill-color": "rgba(92, 30, 0, 0)"
+      }
+    },
+    {
+      "id": "dzk__atu_terhromad__text",
+      "type": "symbol",
+      "source": "dzk_atu",
+      "source-layer": "atu_terhromad_data",
+      "layout": {
+        "text-field": "{ADMIN_3} {TYPE}",
+        "visibility": "none",
+        "symbol-placement": "line",
+        "symbol-spacing": 250,
+        "text-font": [
+          "Klokantech Noto Sans Bold"
+        ],
+        "symbol-avoid-edges": true,
+        "text-allow-overlap": true,
+        "text-ignore-placement": false,
+        "text-padding": 0,
+        "text-pitch-alignment": "auto",
+        "text-rotation-alignment": "auto",
+        "text-offset": [0, 1],
+        "icon-allow-overlap": false,
+        "icon-ignore-placement": false,
+        "text-size": 14,
+        "text-keep-upright": true
+      },
+      "paint": {
+        "text-color": "rgba(150, 19, 19, 0.9)",
+        "text-halo-color": "rgba(255, 255, 255, 0.5)",
+        "text-halo-width": 1
       }
     }
   ],

@@ -1,7 +1,7 @@
 <template>
 
   <MapComponent
-      :mapStyle="'/style/vector_style_07_06_2022.json'"
+      :mapStyle="'/style/vector_style_28_09_2022.json'"
       style="width: 100%; height: 100vh"
   >
 
