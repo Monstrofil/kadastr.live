@@ -4,11 +4,11 @@
     <div class="row">
       <div class="col-md-12">
         <h1>Інформація про земельну ділянку</h1>
-        <p>
+        <div class="alert alert-danger">
           Інформація є довідковою, забороняється використання даних зі
           сторінки для офіційних дій щодо земельної ділянки.
           Для отримання офіційної інформації зверніться до <a href="https://land.gov.ua/" target="_blank">ДЗК</a>.
-        </p>
+        </div>
         <h2>{{ parcelInfo.cadnum }}</h2>
       </div>
       <div class="col-md-8">
