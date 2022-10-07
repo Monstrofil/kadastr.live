@@ -34,9 +34,9 @@
 import maplibregl from "maplibre-gl";
 import { ref } from "vue";
 import SearchBox from "@/components/SearchBox";
-import ParcelInfo from "@/components/ParcelInfo";
-import NatureInfo from "@/components/NatureInfo";
-import IndexInfo from "@/components/IndexInfo";
+import ParcelInfo from "@/components/map/controls/previewTooltip/ParcelInfo";
+import NatureInfo from "@/components/map/controls/previewTooltip/NatureInfo";
+import IndexInfo from "@/components/map/controls/previewTooltip/IndexInfo";
 import WrapperOffcanvas from "@/components/WrapperOffcanvas";
 import FilterToggleButton from "@/components/FilterToggleButton";
 import TerhromadInfo from "@/components/TerhromadInfo";

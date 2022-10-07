@@ -13,7 +13,7 @@
   </div>
 </template>
 <script>
-import FilterCheckbox from "@/components/FilterCheckbox"
+import FilterCheckbox from "@/components/map/controls/filterControls/FilterCheckbox"
 
 export default {
   name: 'LayerFilterItem',

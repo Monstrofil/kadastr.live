@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import FilterCheckbox from "@/components/FilterCheckbox";
+import FilterCheckbox from "@/components/map/controls/filterControls/FilterCheckbox";
 import LayerFilterList from "@/components/map/controls/filterControls/LayerFilterList";
 
 export default {

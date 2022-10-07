@@ -6,14 +6,14 @@
         <button
             data-toggle="collapse"
             data-directory-toggle="true"
-            :class="{'collapsed': !collapsed }"
+            :class="{'collapsed': collapsed }"
             @click="() => {toggler.toggle(); this.collapsed = !collapsed}"
         ></button>
         <span>
           {{ directory.name }}
         </span>
         <span class="mgl-layerControlDirectoryCounter"
-              style="background: rgb(13, 132, 179);
+              style="background: rgba(41, 162, 200, 1);
             display: block;
             float: right;
             color: white;
