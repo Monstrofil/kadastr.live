@@ -13,7 +13,7 @@
     <WrapperOffcanvas>
       <template v-slot:title>Фільтр</template>
       <template v-slot:default>
-        <div ref="filterContainer"></div>
+        <MapFilter :map="map" v-if="map"></MapFilter>
       </template>
     </WrapperOffcanvas>
 
@@ -33,7 +33,6 @@
 <script>
 import maplibregl from "maplibre-gl";
 import { ref } from "vue";
-import {layerControlGrouped} from "@/layerControlGrouped";
 import SearchBox from "@/components/SearchBox";
 import ParcelInfo from "@/components/ParcelInfo";
 import NatureInfo from "@/components/NatureInfo";
@@ -41,10 +40,12 @@ import IndexInfo from "@/components/IndexInfo";
 import WrapperOffcanvas from "@/components/WrapperOffcanvas";
 import FilterToggleButton from "@/components/FilterToggleButton";
 import TerhromadInfo from "@/components/TerhromadInfo";
+import MapFilter from "@/components/map/controls/MapFilter";
 
 export default {
   name: 'MapComponent',
   components: {
+    MapFilter,
     TerhromadInfo,
     FilterToggleButton,
     WrapperOffcanvas,
@@ -80,6 +81,7 @@ export default {
     return {
       highlightedParcels: null,
       popup: null,
+      mapLoaded: false,
       isDownloadAvailable: null,
       ignoreClick: null,
       touchInsideParcel: null,
@@ -91,7 +93,8 @@ export default {
         'index_data': IndexInfo,
         // 'atu_terhromad_data': TerhromadInfo,
         null: NatureInfo,
-      }
+      },
+      map: null
     }
   },
   methods: {
@@ -174,9 +177,7 @@ export default {
         this.popup.remove();
     },
 
-    leave_atu: function (e) {
-      console.log('leave', e)
-
+    leave_atu: function () {
         this.selectedATU = null;
     }
   },
@@ -199,162 +200,6 @@ export default {
       this.popup
             .setDOMContent(document.getElementById('popup-content'))
 
-      var config = {
-        collapsed: false,
-        layers: [
-          {
-            id: "land_polygones",
-            name: "Геометрія ділянок",
-            hidden: false,
-            group: "ДЗК",
-            directory: "Оверлей",
-            metadata: {
-              filterSchema: {
-                "ownership": {
-                  type: "select",
-                  hint: "Форма власності",
-                  options: [
-                    {
-                      id: "Державна власність",
-                      name: "Державна власність"
-                    },
-                    {
-                      id: "Комунальна власність",
-                      name: "Комунальна власність"
-                    },
-                    {
-                      id: "Приватна власність",
-                      name: "Приватна власність"
-                    },
-                    {
-                      id: "Не визначено",
-                      name: "Не визначено",
-                      customFilter: ["any", ["==", ["get", "ownership"], ""], ["==", ["get", "ownership"], "Не визначено"]]
-                    }
-                  ]
-                }
-                ,
-                "category": {
-                  type: "select",
-                  hint: "Категорія земель",
-                  options: [
-                    {
-                      id: "Землі водного фонду",
-                      name: "Водний фонд"
-                    },
-                    {
-                      id: "Землі житлової та громадської забудови",
-                      name: "Житлова та громадська забудова"
-                    },
-                    {
-                      id: "Землі історико-культурного призначення",
-                      name: "Історико-культурні ділянки"
-                    },
-                    {
-                      id: "Землі лісогосподарського призначення",
-                      name: "Лісове господарство"
-                    },
-                    {
-                      id: "Землі оздоровчого призначення",
-                      name: "Оздоровчого призначення"
-                    },
-                    {
-                      id: "Землі природно-заповідного та іншого природоохоронного призначення",
-                      name: "Природоохоронного призначення"
-                    },
-                    {
-                      id: "Землі промисловості, транспорту, зв’язку, енергетики, оборони та іншого призначення",
-                      name: "Промисловості, транспорту, оборони"
-                    },
-                    {
-                      id: "Землі рекреаційного призначення",
-                      name: "Рекреаційного призначення"
-                    },
-                    {
-                      id: "Землі сільськогосподарського призначення",
-                      name: "Сільськогосподарського призначення"
-                    },
-                    {
-                      id: "Не визначено",
-                      name: "Інше",
-                      customFilter: ["any", ["==", ["get", "category"], ""], ["==", ["get", "category"], "Не визначено"]]
-                    },
-                  ]
-                }
-              },
-              lazyLoading: true
-            }
-          },
-          {
-            id: "orto-tiles",
-            name: "Ортофото ДЗК (2011)",
-            hidden: false,
-            group: "Фонові зображення",
-            directory: "Базові шари"
-          },
-          {
-            id: "dzk__pzf",
-            name: "Заповідний фонд",
-            hidden: false,
-            group: "ДЗК",
-            directory: "Оверлей"
-          },
-          {
-            id: "dzk__index_map_lines",
-            chain: "dzk__index_map_poly",
-            name: "Індексна карта",
-            hidden: false,
-            group: "ДЗК",
-            directory: "Оверлей"
-          },
-          {
-            id: "orto-ersi",
-            name: "Ортофото Ersi (2018+)",
-            hidden: false,
-            group: "Фонові зображення",
-            directory: "Базові шари"
-          },
-          // {
-          //   id: "dzk",
-          //   name: "WMS шар ДЗК",
-          //   hidden: false,
-          //   group: "Фонові зображення",
-          //   directory: "Базові шари"
-          // },
-          {
-            id: "openstreetmap",
-            name: "OpenStreetMap",
-            hidden: false,
-            group: "Фонові зображення",
-            directory: "Базові шари"
-          },
-          {
-            id: "dzk__atu_oblast",
-            chain: "dzk__atu_oblast__text",
-            name: "Межі областей",
-            hidden: false,
-            group: "АТУ",
-            directory: "АТУ"
-          },
-          {
-            id: "dzk__atu_rayon",
-            chain: "dzk__atu_rayon__text",
-            name: "Межі районів",
-            hidden: false,
-            group: "АТУ",
-            directory: "АТУ"
-          },
-          {
-            id: "dzk__atu_terhromad__line",
-            chain: "dzk__atu_terhromad__text",
-            name: "Межі громад",
-            hidden: false,
-            group: "АТУ",
-            directory: "АТУ"
-          }
-        ]
-      }
-
       this.isDownloadAvailable = this.map.getZoom() > 13;
       this.map.on('zoomend', () => {
         this.isDownloadAvailable = this.map.getZoom() > 13;
@@ -363,12 +208,6 @@ export default {
       this.map.addControl(this.searchBox, "top-left");
       this.map.addControl(this.filterToggle, "top-right");
 
-      this.filterBox = new layerControlGrouped(config);
-      const element = this.filterBox.onAdd(this.map);
-
-      this.$refs.filterContainer.appendChild(element);
-
-      // this.map.addControl(new layerControlGrouped(config), "top-right");
       this.map.addControl(new maplibregl.NavigationControl(), "bottom-right");
 
       this.enableLayers.forEach((item) => {

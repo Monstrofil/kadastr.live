@@ -257,9 +257,6 @@ export class layerControlGrouped {
 
       if (e.target.dataset.mapFilter) {
         console.log('Filter toggled', e.target.dataset)
-        console.log(map.getLayer(e.target.dataset.mapLayerName))
-        console.log(map.getLayer(e.target.dataset.mapLayerName).setFilter)
-
         let allMapFilters = ["all"];
 
         let allFilters = document.querySelectorAll("[data-map-filter]");
@@ -280,17 +277,6 @@ export class layerControlGrouped {
         })
 
         map.setFilter(e.target.dataset.mapLayerName, allMapFilters);
-
-      //   mglHelper.SetLayerVisibility(map, e.target.checked, e.target.id);
-      //   if (e.target.dataset.children) {
-      //     let children = document.querySelectorAll("[data-parent]");
-      //     for (let i = 0; i < children.length; i++) {
-      //       if (children[i].dataset.parent === e.target.id) {
-      //         children[i].click()
-      //       }
-      //     }
-      //   }
-      // // e.target.blur()
         return
       }
 
