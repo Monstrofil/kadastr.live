@@ -18,9 +18,11 @@
             float: right;
             color: white;
             padding: 1px 4px 0;">
-        {{ directory.groups.map((group) => {
-          return group.layers.filter(layer => layer.checked).length
-        }).reduce((a, b) => a + b) }}
+        {{
+          directory.groups.map((group) => {
+            return group.layers.filter(layer => layer.checked).length
+          }).reduce((a, b) => a + b)
+        }}
       </span>
       </div>
     </div>

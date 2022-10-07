@@ -51,6 +51,8 @@ export default {
     map: null
   },
   mounted() {
+    let params = new URLSearchParams(window.location.search);
+
     this.group.layers.forEach((layer) => {
       let mapStyle = this.map.getLayer(layer.id);
       layer.type = mapStyle.type;
@@ -77,6 +79,9 @@ export default {
       //   }
       // }
       layer.paint = legend;
+      if (params.get(layer.id)) {
+        layer.checked = params.get(layer.id) === 'true';
+      }
       this.configureLayerVisibility(layer);
       this.onLayerFilter(layer);
     })
@@ -93,7 +98,21 @@ export default {
     },
     onLayerToggle(layer) {
       layer.checked = !layer.checked;
-      this.configureLayerVisibility(layer)
+      this.configureLayerVisibility(layer);
+
+      let params = new URLSearchParams(window.location.search);
+      if(layer.checked) {
+        params.set(layer.id, true);
+      }
+      else {
+        params.set(layer.id, false);
+      }
+
+      let url = window.location.protocol + "//" + window.location.host +
+          window.location.pathname + "?" + params.toString() + window.location.hash;
+      window.history.replaceState({
+        path: url
+      }, '', url);
     },
     onLayerFilter(layer, option = null) {
       if (option) {
