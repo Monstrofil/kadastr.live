@@ -35,7 +35,7 @@ export default {
       {
         id: "base-layers",
         name: "Базові шари",
-        collapsed: true,
+        collapsed: false,
         groups: [
           {
             name: "Фонові зображення",
@@ -72,11 +72,18 @@ export default {
       {
         id: "dzk__pzf",
         name: "Векторні дані",
-        hidden: false,
+        collapsed: false,
         groups: [
           {
             name: "Земельний кадастр",
             layers: [
+              {
+                id: "dzk__index_map_lines",
+                chain: "dzk__index_map_poly",
+                name: "Індексна карта",
+                hidden: false,
+                checked: false
+              },
               {
                 id: "land_polygones",
                 name: "Геометрія ділянок",
@@ -173,13 +180,6 @@ export default {
                   lazyLoading: true
                 }
               },
-              {
-                id: "dzk__index_map_lines",
-                chain: "dzk__index_map_poly",
-                name: "Індексна карта",
-                hidden: false,
-                checked: false
-              },
             ]
           },
           {
@@ -194,7 +194,7 @@ export default {
             ]
           },
           {
-            name: "АТУ",
+            name: "Адміністративний устрій",
             layers: [
               {
                 id: "dzk__atu_oblast",

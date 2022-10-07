@@ -1,8 +1,11 @@
 <template>
-  <div class="row">
-    <div class="col-12 nopadding">
+  <div class="row" style="margin-top: 5px;">
+    <div class="col-12">
       <input type="checkbox" id="layerGroup_АТУ" data-layergroup="АТУ" style="display: none">
-      <label for="layerGroup_АТУ" class="mgl-layerControlGroupHeading">
+      <label
+          for="layerGroup_АТУ"
+          class="mgl-layerControlGroupHeading"
+          style="width: 100%; font-weight: 600; font-family: 'Helvetica';">
         {{ group.name }}
       </label>
 
