@@ -2,7 +2,6 @@
   <div>
     <template v-if="feature">
       <div>
-
         <div class="row-item" v-if="feature.properties.cadnum">
           <div class="title">
             Номер
@@ -43,16 +42,18 @@
             {{ feature.properties.ownership }}
           </div>
 
-    </div>
+        </div>
       </div>
 
 
-    <a v-if="is_touchable" class="btn btn-light" role="button" target="_blank"
-       :href="'/parcel/' + feature.properties.cadnum">
-      Детальніше
-    </a>
-</template>
-</div>
+      <div class="text-end">
+        <a v-if="is_touchable" class="btn btn-light" role="button" target="_blank"
+           :href="'/parcel/' + feature.properties.cadnum">
+          Детальніше
+        </a>
+      </div>
+    </template>
+  </div>
 </template>
 
 <script>
@@ -69,7 +70,7 @@ export default {
 
 .row-item {
   display: flex;
-  align-items:flex-end;
+  align-items: flex-end;
 }
 
 .row-item:not(:last-child) {
@@ -88,7 +89,6 @@ export default {
   align-self: center;
   flex: 1;
 }
-
 
 
 </style>

@@ -25,7 +25,7 @@
       </div>
       <div class="col-md-12">
         <div class="row">
-          <div class="col-xs-12 col-md-3" v-for="item in updatesInfo" :key="item">
+          <div class="col-xs-12 col-sm-6 col-md-3" v-for="item in updatesInfo" :key="item">
             <div class="card w-100" style="margin-bottom: 10px">
               <div class="card-header">
                 {{ moment(item.created_at).format('DD.MM.YYYY HH:MM') }}

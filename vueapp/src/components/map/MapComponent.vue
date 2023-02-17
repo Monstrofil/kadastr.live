@@ -25,7 +25,7 @@
     <component
         :is="selectedItem !== null ? renderer[selectedItem.sourceLayer] : 'ParcelInfo'"
         :feature="selectedItem"
-        :is_touchable="false"
+        :is_touchable="ignoreClick"
         id="popup-content"/>
   </div>
 
@@ -254,7 +254,7 @@ export default {
 
       function touchend_layer(e) {
         this.touchInsideParcel = true;
-        if(this.ignoreClick) {
+        if(this.ignoreClick && !this.map.isMoving()) {
           this.highlightParcels(e);
         }
       }
@@ -275,6 +275,7 @@ export default {
       this.map.on('touchend', touchend.bind(this))
 
       function mousemove(e) {
+        console.log('mousemove')
         if(this.ignoreClick) {
           return
         }
