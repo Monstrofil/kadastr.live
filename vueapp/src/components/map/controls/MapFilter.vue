@@ -215,7 +215,7 @@ export default {
                 chain: "dzk__atu_terhromad__text",
                 name: "Межі громад",
                 hidden: false,
-                checked: true
+                checked: false
               }
             ]
           }

@@ -46,7 +46,7 @@
     "orto-tiles": {
       "type": "raster",
       "tiles": [
-        "https://tiles.kadastr.live/geoserver/kadastr/wms?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=tiffs"
+        "https://data.gki.com.ua/api-user/rtile/orto10/ua/{z}/{x}/{y}.png"
       ],
       "tileSize": 256,
       "attribution": "DZK",
