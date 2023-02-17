@@ -1,7 +1,8 @@
 <template>
-<div ref="element" class="mapboxgl-ctrl mgl-searchControl">
+<div ref="element" class="mapboxgl-ctrl mgl-filterControl">
     <a class="btn filter-button" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
-      <i class="fa fa-filter"></i> Керування
+      <i class="fa fa-filter"></i>
+      <span class="fa-filter-caption">&nbsp;Керування</span>
     </a>
 </div>
 </template>
@@ -40,5 +41,30 @@ export default {
   appearance: none;
   border-radius: 0.25rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.mapboxgl-ctrl-top-right {
+  width: 15%;
+}
+
+.fa-filter-caption {
+  display: none;
+}
+
+.mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+  border-color: transparent;
+}
+
+@media (min-width: 650px) {
+  .mapboxgl-ctrl-top-right {
+    max-width: 475px;
+  }
+  .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+    margin: 10px 10px 0 10px;
+  }
+
+  .fa-filter-caption {
+    display: inline-block;
+  }
 }
 </style>

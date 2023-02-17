@@ -1,38 +1,71 @@
 <template>
-
-  <div class="container">
+  <div class="breadcrumbs">
+    <div class="container">
+      <ul>
+        <li>
+          <router-link to="/">Головна</router-link>
+        </li>
+        <li>
+          <router-link active-class="active" to="/update">Оновлення даних</router-link>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="container text-block">
     <div class="row">
       <div class="col-md-12">
-        <h1>Оновлення бази даних</h1>
-        <p>
+        <h1>Оновлення даних</h1>
+         <div class="alert alert-warning">
           Інформація є довідковою, забороняється використання даних зі
-          сторінки для офіційних дій щодо земельної ділянки.
+          сторінки для офіційних дій щодо земельної ділянки. Оновлення даних не гарантується.
+           <br>
           Для отримання офіційної інформації зверніться до <a href="https://land.gov.ua/" target="_blank">ДЗК</a>.
-
-
-        </p>
-        <p>Дані земельного кадастру оновлюються щотижня, перелік успішних оновлень та статистика наведена нижче.</p>
+        </div>
+        <p><s>Дані земельного кадастру оновлюються щотижня</s>, перелік успішних оновлень та статистика наведена нижче.</p>
       </div>
       <div class="col-md-12">
-        <div>
-          <table class="table">
-            <tbody>
-            <tr v-for="(item, index) in updatesInfo" :key="item">
-              <td>{{index + 1}}</td>
-              <td>{{item.status}}</td>
-              <td>{{ moment(item.created_at).format('DD.MM.YYYY HH:MM') }}</td>
-              <td>
-                <div v-if="item.statistics.create">
-                  <span>Створено нових: {{ item.statistics.create }}</span><br>
-                  <span>Оновлено: {{ item.statistics.update }}</span><br>
-                  <span>Видалено: {{ item.statistics.delete }}</span><br>
-                </div>
-                <div v-else>--</div>
-              </td>
-            </tr>
-            </tbody>
-          </table>
+        <div class="row">
+          <div class="col-xs-12 col-md-3" v-for="item in updatesInfo" :key="item">
+            <div class="card w-100" style="margin-bottom: 10px">
+              <div class="card-header">
+                {{ moment(item.created_at).format('DD.MM.YYYY HH:MM') }}
+                <span class="badge bg-success" style="float: right">{{item.status}}</span>
+              </div>
+            <div class="card-body">
 
+              <div class="card-text">
+                <b>Статистика ділянок</b>
+                <div class="row" style="margin-top: 10px">
+                  <div class="col-md-6 text-capitalize">
+                    Нові
+                  </div>
+                  <div class="col-md-6 text-end">
+                    {{ item.statistics.create || '--' }}
+                  </div>
+                <div class="row">
+                </div>
+                  <div class="col-md-6">
+                    Оновлені
+                  </div>
+                  <div class="col-md-6 text-end">
+                    {{ item.statistics.update || '--' }}
+                  </div>
+                <div class="row">
+                </div>
+                  <div class="col-md-6">
+                    Видалені
+                  </div>
+                  <div class="col-md-6 text-end">
+                    {{ item.statistics.delete || '--' }}
+                  </div>
+                </div>
+              </div>
+              <!--<div class="card-text">
+                <span class="text-muted" v-if="item.statistics.create">Деталі</span>
+              </div>-->
+            </div>
+          </div>
+          </div>
         </div>
       </div>
 

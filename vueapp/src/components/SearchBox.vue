@@ -56,6 +56,21 @@
                 <VTooltip
                     :offset="[0, 16]"
                 >
+                  <router-link to="/update/">
+                    <i class="fa fa-refresh"></i>
+                  </router-link>
+
+                  <!-- This will be the content of the popover -->
+                  <template #popper>
+                    Інформація про оновлення даних
+                  </template>
+                </VTooltip>
+
+              </span>
+              <span class="left-pan">
+                <VTooltip
+                    :offset="[0, 16]"
+                >
                   <router-link to="/about">
                     <i class="fa fa-info-circle"></i>
                   </router-link>

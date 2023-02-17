@@ -291,21 +291,21 @@ export default {
 <style>
 
 .mapboxgl-ctrl-top-left {
-  width: 100%;
+  width: 80%;
 }
 
 .mapboxgl-ctrl-top-left .mapboxgl-ctrl {
-  margin: 0;
+  //margin-top: 0;
   border-color: transparent;
 }
 
-  .mgl-searchControl {
-    width: 100%;
-  }
+.mgl-searchControl {
+  width: 100%;
+}
 
 @media (min-width: 550px) {
   .mapboxgl-ctrl-top-left {
-    width: 450px;
+    width: 475px;
   }
   .mapboxgl-ctrl-top-left .mapboxgl-ctrl {
     margin: 10px 10px 0 10px;
