@@ -47,6 +47,12 @@ export default {
                 checked: false
               },
               {
+                id: "topo-tiles",
+                name: "Топографія (ДНІГК)",
+                hidden: false,
+                checked: false
+              },
+              {
                 id: "orto-ersi",
                 name: "Ортофото Ersi (2018+)",
                 hidden: false,

@@ -275,7 +275,6 @@ export default {
       this.map.on('touchend', touchend.bind(this))
 
       function mousemove(e) {
-        console.log('mousemove')
         if(this.ignoreClick) {
           return
         }

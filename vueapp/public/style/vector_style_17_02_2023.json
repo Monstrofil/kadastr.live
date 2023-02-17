@@ -52,6 +52,15 @@
       "attribution": "DZK",
       "maxzoom": 19
     },
+    "topo-tiles": {
+      "type": "raster",
+      "tiles": [
+        "https://data.gki.com.ua/api-user/rtile/topo100/ua/{z}/{x}/{y}.png"
+      ],
+      "tileSize": 256,
+      "attribution": "ДНІГК",
+      "maxzoom": 19
+    },
     "wms-kadastr-source": {
       "type": "raster",
       "tiles": [
@@ -88,6 +97,14 @@
       "id": "orto-tiles",
       "type": "raster",
       "source": "orto-tiles",
+      "minzoom": 0,
+      "maxzoom": 22,
+      "layout": {"visibility": "none"}
+    },
+    {
+      "id": "topo-tiles",
+      "type": "raster",
+      "source": "topo-tiles",
       "minzoom": 0,
       "maxzoom": 22,
       "layout": {"visibility": "none"}
