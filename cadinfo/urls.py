@@ -13,7 +13,7 @@ sitemaps = {
 }
 
 router = routers.SimpleRouter()
-router.register(r'api/parcels', ParcelView)
+router.register(r'api/parcels', ParcelView, basename='Landuse')
 router.register(r'api/updates', UpdateView)
 
 urlpatterns = [

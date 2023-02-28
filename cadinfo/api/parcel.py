@@ -1,3 +1,4 @@
+import logging
 import sys
 import yaml
 from django.core.paginator import Paginator, EmptyPage
@@ -70,6 +71,9 @@ class ParcelSerializer(GeoModelSerializer):
             'ownershipcode',
             'geometry',
 
+            'valuation_value',
+            'valuation_date',
+
             'revision',
         ]
 
@@ -95,6 +99,9 @@ class ParcelHistorySerializer(ParcelSerializer):
             'geometry',
             'address',
 
+            'valuation_value',
+            'valuation_date',
+
             'history',
             'revision',
         ]
@@ -110,10 +117,6 @@ class ManagerFilter(filters.FilterSet):
 
 
 class ParcelView(viewsets.ReadOnlyModelViewSet):
-    queryset = Landuse.objects.filter(
-        revision=Update.get_latest_update().id
-    ).order_by('id')
-
     lookup_field = 'cadnum'
 
     serializer_class = ParcelSerializer
@@ -121,6 +124,11 @@ class ParcelView(viewsets.ReadOnlyModelViewSet):
 
     filter_backends = [ComplexFilterBackend]
     filter_class = ManagerFilter
+
+    def get_queryset(self):
+        return Landuse.objects.filter(
+            revision=Update.get_latest_update().id
+        ).order_by('id')
 
     @action(detail=True, methods=['get'])
     def history(self, request, cadnum=None):

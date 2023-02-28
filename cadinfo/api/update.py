@@ -30,7 +30,10 @@ class UpdateSerializer(ModelSerializer):
 
 class UpdateView(viewsets.ReadOnlyModelViewSet):
     queryset = Update.objects.filter(
-        status__in=[Update.Status.SUCCESS, Update.Status.IN_PROGRESS]
+        status__in=[
+            Update.Status.SUCCESS,
+            Update.Status.IN_PROGRESS
+        ]
     ).order_by('-id')
 
     serializer_class = UpdateSerializer

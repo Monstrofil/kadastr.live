@@ -194,6 +194,23 @@ def update_db(task: InsertTask):
         else:
             point_geom = None
 
+        try:
+            valuation_date = datetime.strptime(
+                parcel['valuation_date'], '%Y-%m-%d %H:%M:%S'
+            ).timestamp() if parcel['valuation_date'] else None
+        except ValueError:
+            # e.g. "valuation_date": "0001-01-01 00:00:00",
+            # who knows why it happened
+            valuation_date = None
+
+        try:
+            valuation_value = float(parcel['valuation_value']) if parcel['valuation_value'] else None
+            if valuation_value and valuation_value > 10**14:
+                # invalid values =/
+                valuation_value = -1
+        except ValueError:
+            valuation_value = -1
+
         parcel = Landuse(
             cadnum=parcel['cadnum'],
             category=parcel['category'],
@@ -204,9 +221,12 @@ def update_db(task: InsertTask):
             unit_area=parcel['unit_area'],
             ownershipcode=parcel['ownershipcode'],
             ownership=parcel['ownership'],
+            valuation_value=valuation_value,
+            valuation_date=valuation_date,
             point=point_geom,
             bbox=GEOSGeometry(parcel['zoom_to'], srid=3857) if parcel['ppoint'] else None,
-            koatuu=task.koatuu.unique_id if task.koatuu.level <= 2 else (task.koatuu.parent if task.koatuu.level == 3 else task.koatuu.pre_parent),
+            koatuu=task.koatuu.unique_id if task.koatuu.level <= 2 else (
+                task.koatuu.parent if task.koatuu.level == 3 else task.koatuu.pre_parent),
             geometry=GEOSGeometry(parcel['geom'], srid=4326) if parcel['geom'] else None,
             revision=task.revision
         )

@@ -82,6 +82,9 @@ class Landuse(models.Model):
     ownership = models.TextField()
     ownershipcode = models.CharField(max_length=10)
 
+    valuation_value = models.DecimalField(max_digits=16, decimal_places=2)
+    valuation_date = models.BigIntegerField()
+
     revision = models.ForeignKey(Update, on_delete=models.CASCADE, db_column='revision')
 
     point = gis.PointField(null=True)
@@ -112,6 +115,8 @@ class Landuse(models.Model):
             'use',
             'purpose',
             'purpose_code',
+            'valuation_date',
+            'valuation_value',
             'ownership',
             'ownershipcode',
             'geometry',
