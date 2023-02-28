@@ -151,7 +151,7 @@ export default {
     search() {
       return this.debounce((searchText) => {
         axios.get(
-            `/search/${searchText}`
+            `/search/${searchText}/`
         ).then(response => {
           this.searchResults = response.data;
         });

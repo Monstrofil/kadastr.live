@@ -1,6 +1,17 @@
 <template>
-
-  <div class="container" v-if="parcelInfo">
+  <div class="breadcrumbs">
+    <div class="container">
+      <ul>
+        <li>
+          <router-link to="/">Головна</router-link>
+        </li>
+        <li>
+          <router-link active-class="active" :to="'/parcel/' + $route.params.pk">{{ $route.params.pk }}</router-link>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="container text-block" v-if="parcelInfo">
     <div class="row">
       <div class="col-md-12">
         <h1>Інформація про земельну ділянку</h1>
@@ -9,7 +20,11 @@
           сторінки для офіційних дій щодо земельної ділянки.
           Для отримання офіційної інформації зверніться до <a href="https://land.gov.ua/" target="_blank">ДЗК</a>.
         </div>
-        <h2>{{ parcelInfo.cadnum }}</h2>
+        <h2>{{ parcelInfo.cadnum }} <a class="btn btn-light" role="button" target="_blank"
+           :href="'https://e.land.gov.ua/back/cadaster/?cad_num=' + parcelInfo.cadnum">
+          Інформація про речові права
+        </a></h2>
+
       </div>
       <div class="col-md-8">
           <table class="table">
@@ -41,6 +56,11 @@
             <tr>
               <td>адреса</td>
               <td>{{ parcelInfo.address || "немає даних" }}</td>
+            </tr>
+            <tr>
+              <td>нормативна грошова оцінка</td>
+              <td v-if="parcelInfo.valuation_value">{{ parcelInfo.valuation_value }} грн<span v-if="parcelInfo.valuation_date"> від {{ moment(parcelInfo.valuation_date * 1000).format('YYYY-MM-DD') }}</span></td>
+              <td v-else>немає даних</td>
             </tr>
             </tbody>
           </table>
@@ -96,6 +116,12 @@
                 <td>Категорія</td>
                 <td v-if="previous" style="background-color: #ffe7e7">{{ previous.category }}</td>
                 <td style="background-color: #d2ffd2">{{ item.category }}</td>
+              </tr>
+
+              <tr v-if="previous?.valuation_value !== item.valuation_value">
+                <td>Нормативна грошова оцінка</td>
+                <td v-if="previous" style="background-color: #ffe7e7">{{ previous.valuation_value || "дані відсутні" }}</td>
+                <td style="background-color: #d2ffd2">{{ item.valuation_value }}</td>
               </tr>
 
               <tr v-if="previous?.area !== item.area || previous?.unit_area !== item.unit_area">

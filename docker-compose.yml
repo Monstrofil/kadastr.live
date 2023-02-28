@@ -72,8 +72,8 @@ services:
     restart: unless-stopped
     environment:
       - APP_MODULE=cadastr.wsgi:application
-#      - DEBUG
-#      - LOG_LEVEL=debug
+      - DEBUG
+      - LOG_LEVEL=debug
       - SQL_HOST
       - SQL_USER
       - SQL_PASS

@@ -46,10 +46,14 @@
       </div>
 
 
-      <div class="text-end">
+      <div class="text-end text-block">
         <a v-if="is_touchable" class="btn btn-light" role="button" target="_blank"
            :href="'/parcel/' + feature.properties.cadnum">
           Детальніше
+        </a>
+        <a v-if="is_touchable" class="btn btn-light" role="button" target="_blank"
+           :href="'https://e.land.gov.ua/back/cadaster/?cad_num=' + feature.properties.cadnum">
+          Перейти до ДЗК
         </a>
       </div>
     </template>
