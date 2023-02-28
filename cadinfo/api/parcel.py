@@ -1,5 +1,6 @@
 import sys
-from django.core.paginator import Paginator
+import yaml
+from django.core.paginator import Paginator, EmptyPage
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -15,7 +16,14 @@ from cadinfo.models import Landuse, Update
 class NoCountPaginationClass(Paginator):
     @property
     def count(self):
-        return sys.maxsize
+        try:
+            return yaml.load(
+                self.object_list.explain(format='YAML'),
+                Loader=yaml.SafeLoader
+            )[0]['Plan']['Plan Rows']
+        except (KeyError, IndexError):
+            logging.exception('Unable to estimate query size')
+            return 30 * 10**6
 
 
 class ParcelPagination(PageNumberPagination):
