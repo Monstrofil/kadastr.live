@@ -5,22 +5,22 @@
   "sources": {
     "cadastr": {
       "type": "vector",
-      "url": "https://kadastr.live/tiles/capabilities/kadastr.json",
+      "url": "https://kadastr.live/tiles/capabilities/kadastr.json?version=2023-03-24",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
     "dzk_pzf": {
       "type": "vector",
-      "url": "https://kadastr.live/tiles/capabilities/dzk_pzf.json",
+      "url": "https://kadastr.live/tiles/capabilities/dzk_pzf.json?version=2023-03-24",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
     "dzk_atu": {
       "type": "vector",
-      "url": "https://kadastr.live/tiles/capabilities/dzk_atu.json",
+      "url": "https://kadastr.live/tiles/capabilities/dzk_atu.json?version=2023-03-24",
       "attribution": "DZK"
     },
     "dzk_index_map": {
       "type": "vector",
-      "url": "https://kadastr.live/tiles/capabilities/dzk_index_map.json",
+      "url": "https://kadastr.live/tiles/capabilities/dzk_index_map.json?version=2023-03-24",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
     "raster-tiles": {
@@ -73,6 +73,10 @@
     "dummy": {
       "type": "geojson",
       "data": {"type": "FeatureCollection", "features": []}
+    },
+    "dzk_water_map": {
+      "type": "vector",
+      "url": "https://kadastr.live/tiles/capabilities/dzk_water_map.json"
     }
   },
   "glyphs": "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
@@ -329,6 +333,67 @@
         "text-color": "rgba(150, 19, 19, 0.9)",
         "text-halo-color": "rgba(255, 255, 255, 0.5)",
         "text-halo-width": 1
+      }
+    },
+    {
+      "id": "water_lines_text",
+      "type": "symbol",
+      "source": "dzk_water_map",
+      "source-layer": "river_line",
+      "layout": {
+        "text-field": "{name_ua}",
+        "visibility": "visible",
+        "symbol-placement": "line-center",
+        "text-font": ["Open Sans Bold"],
+        "symbol-avoid-edges": false,
+        "text-offset": [0, 1],
+        "text-allow-overlap": false,
+        "text-pitch-alignment": "auto"
+      },
+      "paint": {
+        "text-color": "rgba(45, 79, 255, 1)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 2,
+        "text-halo-blur": 1
+      }
+    },
+    {
+      "id": "water_lines_other",
+      "type": "line",
+      "source": "dzk_water_map",
+      "source-layer": "river_line",
+      "filter": ["all", ["<", "length", 50]],
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "line-color": "rgba(45, 79, 255, 1)",
+        "line-width": {"stops": [[5, 0.5], [12, 2]]},
+        "line-blur": 1.5
+      }
+    },
+    {
+      "id": "water_lines_middle_rivers",
+      "type": "line",
+      "source": "dzk_water_map",
+      "source-layer": "river_line",
+      "filter": ["all", [">=", "length", 50]],
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "line-color": "rgba(45, 79, 255, 1)",
+        "line-width": {"stops": [[5, 1], [12, 4]]},
+        "line-blur": 1.5
+      }
+    },
+    {
+      "id": "water_lines_large",
+      "type": "line",
+      "source": "dzk_water_map",
+      "source-layer": "river_line",
+      "filter": ["all", [">=", "length", 100]],
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "line-color": "rgba(45, 79, 255, 1)",
+        "line-width": {"stops": [[5, 2], [12, 6]]},
+        "line-blur": 2
       }
     }
   ],

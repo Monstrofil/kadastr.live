@@ -1,6 +1,6 @@
 {
   "name": "vueapp",
-  "version": "0.3.6",
+  "version": "0.3.8",
   "private": true,
   "scripts": {
     "serve": "SET NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",

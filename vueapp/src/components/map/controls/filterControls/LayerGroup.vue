@@ -95,8 +95,11 @@ export default {
           layer.id, 'visibility', layer.checked ? 'visible' : 'none');
 
       if (layer.chain) {
-        this.map.setLayoutProperty(
-            layer.chain, 'visibility', layer.checked ? 'visible' : 'none');
+        var chainedLayers = Array.isArray(layer.chain) ? layer.chain : [layer.chain];
+        chainedLayers.forEach(chainedName => {
+          this.map.setLayoutProperty(
+            chainedName, 'visibility', layer.checked ? 'visible' : 'none');
+        })
       }
     },
     onLayerToggle(layer) {

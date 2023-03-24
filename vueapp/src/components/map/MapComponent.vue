@@ -37,6 +37,7 @@ import SearchBox from "@/components/SearchBox";
 import ParcelInfo from "@/components/map/controls/previewTooltip/ParcelInfo";
 import NatureInfo from "@/components/map/controls/previewTooltip/NatureInfo";
 import IndexInfo from "@/components/map/controls/previewTooltip/IndexInfo";
+import RiverInfo from "@/components/map/controls/previewTooltip/RiverInfo";
 import WrapperOffcanvas from "@/components/WrapperOffcanvas";
 import FilterToggleButton from "@/components/FilterToggleButton";
 import TerhromadInfo from "@/components/TerhromadInfo";
@@ -91,7 +92,7 @@ export default {
         'land_polygons': ParcelInfo,
         'pzf_data': NatureInfo,
         'index_data': IndexInfo,
-        // 'atu_terhromad_data': TerhromadInfo,
+        'river_line': RiverInfo,
         null: NatureInfo,
       },
       map: null
@@ -251,6 +252,10 @@ export default {
       this.map.on('mouseleave', 'dzk__pzf', mouseleave_layer.bind(this));
       this.map.on('mouseleave', 'dzk__atu_terhromad', this.leave_atu.bind(this));
       this.map.on('mouseleave', 'dzk__index_map_poly', mouseleave_layer.bind(this));
+      this.map.on('mouseleave', 'water_lines_other', mouseleave_layer.bind(this));
+      this.map.on('mouseleave', 'water_lines_middle_rivers', mouseleave_layer.bind(this));
+      this.map.on('mouseleave', 'water_lines_large', mouseleave_layer.bind(this));
+      this.map.on('mouseleave', 'water_lines_text', mouseleave_layer.bind(this));
 
       function touchend_layer(e) {
         this.touchInsideParcel = true;
@@ -262,6 +267,10 @@ export default {
       this.map.on('touchend', 'dzk__pzf', touchend_layer.bind(this))
       // this.map.on('touchend', 'dzk__atu_terhromad', touchend_layer.bind(this))
       this.map.on('touchend', 'dzk__index_map_poly', touchend_layer.bind(this))
+      this.map.on('touchend', 'water_lines_other', touchend_layer.bind(this))
+      this.map.on('touchend', 'water_lines_middle_rivers', touchend_layer.bind(this))
+      this.map.on('touchend', 'water_lines_large', touchend_layer.bind(this))
+      this.map.on('touchend', 'water_lines_text', touchend_layer.bind(this))
 
       function touchend() {
         if(this.touchInsideParcel){
@@ -284,6 +293,10 @@ export default {
       this.map.on('mousemove', 'dzk__pzf', mousemove.bind(this));
       this.map.on('mousemove', 'dzk__atu_terhromad', mousemove.bind(this));
       this.map.on('mousemove', 'dzk__index_map_poly', mousemove.bind(this));
+      this.map.on('mousemove', 'water_lines_other', mousemove.bind(this));
+      this.map.on('mousemove', 'water_lines_middle_rivers', mousemove.bind(this));
+      this.map.on('mousemove', 'water_lines_large', mousemove.bind(this));
+      this.map.on('mousemove', 'water_lines_text', mousemove.bind(this));
     });
   }
 }

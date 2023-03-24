@@ -197,6 +197,13 @@ export default {
                 hidden: false,
                 checked: false
               },
+              {
+                id: "water_lines_other",
+                chain: ["water_lines_middle_rivers", "water_lines_large", "water_lines_text"],
+                name: "Річкова мережа",
+                hidden: false,
+                checked: false
+              },
             ]
           },
           {
