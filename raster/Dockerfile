@@ -1,61 +1,12 @@
-FROM node:10-buster AS builder
-
-RUN export DEBIAN_FRONTEND=noninteractive \
-  && apt-get -qq update \
-  && apt-get -y --no-install-recommends install \
-      apt-transport-https \
-      curl \
-      git \
-      unzip \
-      build-essential \
-      python \
-      libcairo2-dev \
-      libgles2-mesa-dev \
-      libgbm-dev \
-      libllvm7 \
-      libprotobuf-dev \
-  && apt-get -y --purge autoremove \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
-
-
-RUN git clone https://github.com/Monstrofil/tileserver-gl.git && ls
-RUN mv tileserver-gl /usr/src/app
-
-ENV NODE_ENV="production"
-
-RUN cd /usr/src/app && npm install --production
-
-
-FROM node:10-buster-slim AS final
-
-RUN export DEBIAN_FRONTEND=noninteractive \
-  && apt-get -qq update \
-  && apt-get -y --no-install-recommends install \
-      libgles2-mesa \
-      libegl1 \
-      xvfb \
-      xauth \
-  && apt-get -y --purge autoremove \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
-
-COPY --from=builder /usr/src/app /app
-
-ENV NODE_ENV="production"
-ENV CHOKIDAR_USEPOLLING=1
-ENV CHOKIDAR_INTERVAL=500
+FROM maptiler/tileserver-gl
 
 VOLUME /data
 WORKDIR /data
 
-EXPOSE 80
+RUN apt install -y python3-pip
 
-#USER node:node
+COPY requirements.txt /requirements.txt
+RUN pip3 install -r /requirements.txt
 
-ENTRYPOINT ["/app/docker-entrypoint.sh"]
-
-#CMD ["-p", "80"]
-
-COPY data /layers
-COPY configs /configs
+COPY main.py /main.py
+RUN python3 /main.py
