@@ -10,7 +10,7 @@
 
 <script>
 import maplibregl from "maplibre-gl";
-import Compare from "mapbox-gl-compare";
+import Compare from "@maplibre/maplibre-gl-compare";
 import * as turf from "@turf/turf";
 
 export default {

@@ -54,7 +54,7 @@ export default {
               },
               {
                 id: "orto-ersi",
-                name: "Ортофото Ersi (2018+)",
+                name: "Ортофото ESRI (2018+)",
                 hidden: false,
                 checked: false
               },

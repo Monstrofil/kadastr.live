@@ -3,8 +3,7 @@ import App from './App.vue'
 import {createRouter, createWebHistory} from 'vue-router'
 import VueClipboard from 'vue3-clipboard'
 import 'maplibre-gl/dist/maplibre-gl.css';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import 'mapbox-gl-compare/dist/mapbox-gl-compare.css';
+import '@maplibre/maplibre-gl-compare/dist/maplibre-gl-compare.css';
 
 import axios from 'axios';
 import './assets/styles.scss'
