@@ -4,6 +4,7 @@ import yaml
 from django.core.paginator import Paginator, EmptyPage
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
@@ -124,6 +125,9 @@ class ParcelView(viewsets.ReadOnlyModelViewSet):
 
     filter_backends = [ComplexFilterBackend]
     filter_class = ManagerFilter
+    
+    def list(self, request, *args, **kwargs):
+        raise PermissionDenied(detail='Temporary locked')
 
     def get_queryset(self):
         return Landuse.objects.filter(
