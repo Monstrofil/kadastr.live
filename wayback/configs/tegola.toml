@@ -1,0 +1,94 @@
+[webserver]
+port = "0.0.0.0:8080"
+uri_prefix = "/wayback_tiles/"
+
+# register data providers
+[[providers]]
+name = "kadastr"
+type = "mvt_postgis"
+host = "${SQL_HOST}"
+port = "${SQL_PORT}"
+database = "postgres"
+user = "${SQL_USER}"
+password = "${SQL_PASS}"
+srid = 3857
+
+  [[providers.layers]]
+  name = "land_polygons"
+  geometry_fieldname = "geometry"
+  geometry_type = "polygon"
+  id_fieldname = "id"
+  srid = 4326
+  sql = """
+    SELECT
+      q.*,
+      (SELECT address FROM cadinfo_address WHERE cadinfo_address.cadnum = q.cadnum) AS address
+    FROM (
+		SELECT
+		  ST_AsMVTGeom(ST_AsBinary(geometry::geometry), !BBOX!) AS geometry,
+		  ownership,
+		  cadnum,
+		  purpose,
+		  category,
+		  id
+		FROM landuse
+		WHERE
+		  revision = !REVISION! AND
+		  geometry && !BBOX!
+    ) q
+
+  """
+
+  [[providers.layers]]
+  name = "polygons"
+  geometry_fieldname = "geometry"
+  geometry_type = "polygon"
+  id_fieldname = "id"
+  srid = 3857
+  sql = """
+    SELECT ST_AsMVTGeom(ST_AsBinary(geometry), !BBOX!) AS geometry, 0 AS id
+    FROM public.landuse_statistics WHERE geometry && !BBOX!
+  """
+
+  [[providers.layers]]
+  name = "centroids"
+  geometry_fieldname = "geometry"
+  geometry_type = "point"
+  id_fieldname = "id"
+  sql = """
+    SELECT ST_AsMVTGeom(ST_AsBinary(point), !BBOX!) AS geometry, to_char(parcels, '9 999 999') AS parcels, 0 AS id
+    FROM public.landuse_statistics WHERE geometry && !BBOX!
+  """
+
+[[maps]]
+name = "kadastr"
+
+  [[maps.params]]
+  name          = "revision"         # name used in the URL
+  token         = "!REVISION!"       # token to replace in providers.layers.sql query
+  type          = "int"        # one of: int, float, string, bool
+  sql           = "?"
+
+  # if parameter is not specified, this value will replace the .sql parameter.
+  default_sql   = """(
+	SELECT id
+	FROM cadinfo_update
+	WHERE status = 'success'
+	ORDER BY id DESC
+	LIMIT 1
+  )"""
+
+  [[maps.layers]]
+  provider_layer = "kadastr.polygons"
+  min_zoom = 3
+  max_zoom = 11
+
+  [[maps.layers]]
+  provider_layer = "kadastr.land_polygons"
+  min_zoom = 11
+  max_zoom = 16
+
+  [[maps.layers]]
+  provider_layer = "kadastr.centroids"
+  min_zoom = 3
+  max_zoom = 7

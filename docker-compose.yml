@@ -20,7 +20,7 @@ services:
     build: tiles
     restart: unless-stopped
     ports:
-      - 8686:8686
+      - 127.0.0.1:8686:8686
     environment:
       - SQL_HOST
       - SQL_USER
@@ -28,12 +28,35 @@ services:
       - SQL_DB
       - SQL_PORT
     volumes:
-      - ${SPHINX_CACHE_DIR:-./tiles_cache/:/cache/}
+      - ${TILES_CACHE_DIR:-/ssd/tegola_cache/:/cache/}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.tiles.rule=PathPrefix(`/tiles/`)"
       - "traefik.http.routers.tiles.entrypoints=web,websecure"
       - "traefik.http.routers.tiles.middlewares=cors"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cors.headers.addvaryheader=true"
+      - "containers.group=kadastr.live"
+
+  wayback_tiles:
+    build: wayback
+    restart: unless-stopped
+    environment:
+      - SQL_HOST
+      - SQL_USER
+      - SQL_PASS
+      - SQL_DB
+      - SQL_PORT
+    command:
+      - --config
+      - "/opt/tegola_config"
+      - serve
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wayback_tiles.rule=PathPrefix(`/wayback_tiles/`)"
+      - "traefik.http.routers.wayback_tiles.entrypoints=web,websecure"
+      - "traefik.http.routers.wayback_tiles.middlewares=cors"
+      - "traefik.http.services.wayback_tiles.loadbalancer.server.port=8080"
       - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
       - "traefik.http.middlewares.cors.headers.addvaryheader=true"
       - "containers.group=kadastr.live"
@@ -56,7 +79,7 @@ services:
     build: vueapp
     restart: unless-stopped
     ports:
-    - 8882:80
+    - 127.0.0.1:8882:80
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.nginx.rule=PathPrefix(`/`)"
@@ -104,8 +127,8 @@ services:
       - "--entrypoints.websecure.http.tls=true"
       - "--entryPoints.web.forwardedHeaders.insecure"
     ports:
-      - "11080:80"
-      - "11443:443"
+      - "127.0.0.1:11080:80"
+      - "127.0.0.1:11443:443"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=PathPrefix(`/traefik/admin`) || PathPrefix(`/traefik/api`)|| HeadersRegexp(`Referer`, `.*/traefik/.*`)"

@@ -38,22 +38,6 @@ class LandInfoView(TemplateView):
         pass
 
 
-class TegolaConfigView(TemplateView):
-    template_name = 'tegola.toml'
-
-    def get_context_data(self, **kwargs):
-        content = super(TegolaConfigView, self).get_context_data(**kwargs)
-
-        content['updates'] = Update.objects.filter(
-            status=Update.Status.SUCCESS
-        ).all()
-
-        return content
-
-    def get_queryset(self):
-        pass
-
-
 class ExportGeoJsonView(View):
     def get(self, request, left, bottom, right, top, *args, **kwargs):
         left = float(left)
@@ -222,6 +206,3 @@ class MetricsView(View):
         response = HttpResponse(generate_latest(), content_type="application/json")
         return response
 
-
-class IndexView(TemplateView):
-    template_name = 'index.html'

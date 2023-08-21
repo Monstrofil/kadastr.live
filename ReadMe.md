@@ -14,30 +14,11 @@ but author can give you whatever raw data you want.
 
 ![Map, the best map ever](/static/main_page.png)
 
-# Installation
-
-    pip install -r requirements.txt
-    
-Fill cadastr/.env file with postgresql database credentials 
-(ask author using email to provide you read-only access to database)
-
-Example:
-
-    KADASTR_DB_USER=login
-    KADASTR_DB_PASSWORD=password
-
-Run it as regular django website.
 
 # Editing map style
 
 Use [maputnik](https://maputnik.github.io/editor/) as WYSIWYG editor
 for vector_style.json style located in `static` folder.
-
-# Missing parts
-
-Lots of logic that works with land.gov.ua is still hidden because author
-is too lazy to remove all credentials and secrets from code. One day either it will be
-published, or I'll accidentally publish it with all passwords compromised.
 
 # Contacts
 

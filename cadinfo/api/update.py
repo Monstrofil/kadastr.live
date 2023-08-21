@@ -29,11 +29,12 @@ class UpdateSerializer(ModelSerializer):
 
 
 class UpdateView(viewsets.ReadOnlyModelViewSet):
+    # FIXME: temporary disable this API
     queryset = Update.objects.filter(
         status__in=[
             Update.Status.SUCCESS,
             Update.Status.IN_PROGRESS
-        ]
+        ], id__lt=0
     ).order_by('-id')
 
     serializer_class = UpdateSerializer

@@ -112,53 +112,6 @@ filepath = "/static/index_db.gpkg"
 	"""
 
 
-[[providers]]
-name = "river_line"
-type = "gpkg"
-filepath = "/static/river_line.gpkg"
-
-	[[providers.layers]]
-	name = "river_line"
-	srid = 4326
-	sql = """
-		SELECT
-			fid, geom,
-			"Власна назва (українською мовою)" as name_ua, "Довжина, км" as length, "Назва альтернативна" as alt_name,
-			"Тип об’єкту гідрографії" as type, "Клас об’єкту гідрографії" as class,
-			"Чия притока чи куди впадає" as destination, "Площа басейну" as basin_sq,
-			si.minx, si.miny, si.maxx, si.maxy
-		FROM
-			rivers lp
-		JOIN
-			rtree_rivers_geom si ON lp.fid = si.id
-		WHERE
-			!BBOX!
-	"""
-
-
-[[providers]]
-name = "river_line_z4"
-type = "gpkg"
-filepath = "/static/river_line_z4.gpkg"
-
-	[[providers.layers]]
-	name = "river_line_z4"
-	srid = 4326
-	sql = """
-		SELECT
-			fid, geom,
-			"Власна назва (українською мовою)" as name_ua, "Довжина, км" as length, "Назва альтернативна" as alt_name,
-			"Тип об’єкту гідрографії" as type, "Клас об’єкту гідрографії" as class,
-			"Чия притока чи куди впадає" as destination, "Площа басейну" as basin_sq,
-			si.minx, si.miny, si.maxx, si.maxy
-		FROM
-			river_line_z4 lp
-		JOIN
-			rtree_river_line_z4_geom si ON lp.fid = si.id
-		WHERE
-			!BBOX!
-	"""
-
 # register data providers
 [[mvt_providers]]
 name = "kadastr"
@@ -169,6 +122,165 @@ database = "postgres"
 user = "${SQL_USER}"
 password = "${SQL_PASS}"
 srid = 3857
+
+  [[mvt_providers.layers]]
+  name = "river_line"
+  geometry_fieldname = "geometry"
+  geometry_type = "polygon"
+  id_fieldname = "id"
+  srid = 4326
+
+  sql = """
+  	SELECT
+  		id,
+  		CASE
+  		 WHEN !ZOOM! < 6 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_8, 3857),ST_Transform(!BBOX!,3857))
+         WHEN !ZOOM! < 8 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_10, 3857),ST_Transform(!BBOX!,3857))
+         WHEN !ZOOM! < 10 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_12, 3857),ST_Transform(!BBOX!,3857))
+         ELSE ST_AsMVTGeom(ST_Transform(geometry, 3857),ST_Transform(!BBOX!,3857)) END
+        AS geometry,
+  		properties->>'Власна назва (українською мовою)'  as name_ua,
+  		(properties->>'Довжина, км')::int as length,
+  		properties->>'Назва альтернативна' as alt_name,
+		properties->>'Тип об’єкту гідрографії' as type,
+		properties->>'Клас об’єкту гідрографії' as class,
+		properties->>'Чия притока чи куди впадає' as destination,
+		properties->>'Площа басейну' as basin_sq
+	FROM public.geodata_georecord
+	WHERE revision_id = (
+		SELECT id
+		FROM public.geodata_geojsonupload
+		WHERE filename = 'river_line.geojson'
+		ORDER BY id DESC
+		LIMIT 1
+	  ) AND
+	  geometry && !BBOX!
+  """
+
+
+  [[mvt_providers.layers]]
+  name = "nsdi_sm_merega"
+  geometry_fieldname = "geometry"
+  geometry_type = "polygon"
+  id_fieldname = "id"
+  srid = 4326
+
+  sql = """
+  	SELECT
+  		id,
+		CASE
+  		 WHEN !ZOOM! < 6 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_8, 3857),ST_Transform(!BBOX!,3857))
+         WHEN !ZOOM! < 8 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_10, 3857),ST_Transform(!BBOX!,3857))
+         WHEN !ZOOM! < 10 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_12, 3857),ST_Transform(!BBOX!,3857))
+         ELSE ST_AsMVTGeom(ST_Transform(geometry, 3857),ST_Transform(!BBOX!,3857)) END
+        AS geometry,
+		properties->>'site_code' as site_code,
+		properties->>'Назва' as name,
+		properties->>'Площа' as square,
+		properties->>'Регіон' as region
+	FROM public.geodata_georecord
+	WHERE revision_id = (
+		SELECT id
+		FROM public.geodata_geojsonupload
+		WHERE filename = 'nsdi_sm_merega.geojson'
+		ORDER BY id DESC
+		LIMIT 1
+	  ) AND
+	  geometry && !BBOX!
+  """
+
+  [[mvt_providers.layers]]
+  name = "nsdi_river_basin"
+  geometry_fieldname = "geometry"
+  geometry_type = "polygon"
+  id_fieldname = "id"
+  srid = 4326
+
+  sql = """
+  	SELECT
+  		id,
+  		CASE
+  		 WHEN !ZOOM! < 6 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_8, 3857),ST_Transform(!BBOX!,3857))
+         WHEN !ZOOM! < 8 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_10, 3857),ST_Transform(!BBOX!,3857))
+         WHEN !ZOOM! < 10 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_12, 3857),ST_Transform(!BBOX!,3857))
+         ELSE ST_AsMVTGeom(ST_Transform(geometry, 3857),ST_Transform(!BBOX!,3857)) END
+        AS geometry,
+		properties->>'name_ua' as name,
+		properties->>'Площа водозбору басейну, кв. км' as square
+	FROM public.geodata_georecord
+	WHERE revision_id = (
+		SELECT id
+		FROM public.geodata_geojsonupload
+		WHERE filename = 'river_basin.geojson'
+		ORDER BY id DESC
+		LIMIT 1
+	  ) AND
+	  geometry && !BBOX!
+  """
+
+
+  [[mvt_providers.layers]]
+  name = "nsdi_river_subbasin"
+  geometry_fieldname = "geometry"
+  geometry_type = "polygon"
+  id_fieldname = "id"
+  srid = 4326
+
+  sql = """
+  	SELECT
+  		id,
+  		CASE
+  		 WHEN !ZOOM! < 6 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_8, 3857),ST_Transform(!BBOX!,3857))
+         WHEN !ZOOM! < 8 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_10, 3857),ST_Transform(!BBOX!,3857))
+         WHEN !ZOOM! < 10 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_12, 3857),ST_Transform(!BBOX!,3857))
+         ELSE ST_AsMVTGeom(ST_Transform(geometry, 3857),ST_Transform(!BBOX!,3857)) END
+        AS geometry,
+		properties->>'name_ua' as name,
+		properties->>'Код суббасейну' as code,
+		properties->>'Площа водозбору суббасейну, кв. км' as square,
+		properties->>'Назва басейну' as basin_name,
+		properties->>'id' as id
+	FROM public.geodata_georecord
+	WHERE revision_id = (
+		SELECT id
+		FROM public.geodata_geojsonupload
+		WHERE filename = 'river_subbasin.geojson'
+		ORDER BY id DESC
+		LIMIT 1
+	  ) AND
+	  geometry && !BBOX!
+  """
+
+  [[mvt_providers.layers]]
+  name = "nsdi_manage_parcel"
+  geometry_fieldname = "geometry"
+  geometry_type = "polygon"
+  id_fieldname = "id"
+  srid = 4326
+
+  sql = """
+  	SELECT
+  		id,
+  		CASE
+  		 WHEN !ZOOM! < 6 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_8, 3857),ST_Transform(!BBOX!,3857))
+         WHEN !ZOOM! < 8 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_10, 3857),ST_Transform(!BBOX!,3857))
+         WHEN !ZOOM! < 10 THEN ST_AsMVTGeom(ST_Transform(geometry_zoom_12, 3857),ST_Transform(!BBOX!,3857))
+         ELSE ST_AsMVTGeom(ST_Transform(geometry, 3857),ST_Transform(!BBOX!,3857)) END
+        AS geometry,
+		properties->>'name_ua' as name,
+		properties->>'Код' as code,
+		properties->>'Площа, кв. км' as square,
+		properties->>'Назва суббасейну' as subbasin_name
+	FROM public.geodata_georecord
+	WHERE revision_id = (
+		SELECT id
+		FROM public.geodata_geojsonupload
+		WHERE filename = 'manage_parcel.geojson'
+		ORDER BY id DESC
+		LIMIT 1
+	  ) AND
+	  geometry && !BBOX!
+  """
 
   [[mvt_providers.layers]]
   name = "land_polygons"
@@ -262,15 +374,38 @@ name = "dzk_water_map"
 
   [[maps.layers]]
   name="river_line"
-  provider_layer = "river_line_z4.river_line_z4"
-  min_zoom = 0
-  max_zoom = 7
+  provider_layer = "mvt_kadastr.river_line"
+  min_zoom = 3
+  max_zoom = 14
 
   [[maps.layers]]
-  name="river_line"
-  provider_layer = "river_line.river_line"
-  min_zoom = 8
-  max_zoom = 15
+  name="nsdi_sm_merega"
+  provider_layer = "mvt_kadastr.nsdi_sm_merega"
+  dont_simplify = true
+  min_zoom = 3
+  max_zoom = 14
+
+  [[maps.layers]]
+  name="nsdi_river_basin"
+  provider_layer = "mvt_kadastr.nsdi_river_basin"
+  dont_simplify = true
+  min_zoom = 3
+  max_zoom = 14
+
+  [[maps.layers]]
+  name="nsdi_river_subbasin"
+  provider_layer = "mvt_kadastr.nsdi_river_subbasin"
+  dont_simplify = true
+  min_zoom = 3
+  max_zoom = 14
+
+  [[maps.layers]]
+  name="nsdi_manage_parcel"
+  provider_layer = "mvt_kadastr.nsdi_manage_parcel"
+  dont_simplify = true
+  min_zoom = 3
+  max_zoom = 14
+
 
 [[maps]]
 name = "kadastr"
