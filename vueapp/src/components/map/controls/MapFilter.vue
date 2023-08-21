@@ -52,12 +52,12 @@ export default {
                 hidden: false,
                 checked: false
               },
-              {
-                id: "orto-ersi",
-                name: "Ортофото ESRI (2018+)",
-                hidden: false,
-                checked: false
-              },
+              //{
+              //  id: "orto-ersi",
+              //  name: "Ортофото ESRI (2018+)",
+              //  hidden: false,
+              //  checked: false
+              //},
               {
                 id: "openstreetmap",
                 name: "OpenStreetMap",
@@ -198,9 +198,33 @@ export default {
                 checked: false
               },
               {
+                id: "nsdi_sm_merega",
+                name: "Смарагдова мережа",
+                hidden: false,
+                checked: false
+              },
+              {
                 id: "water_lines_other",
                 chain: ["water_lines_middle_rivers", "water_lines_large", "water_lines_text"],
                 name: "Річкова мережа",
+                hidden: false,
+                checked: false
+              },
+              {
+                id: "river_basin",
+                name: "Басейни річок",
+                hidden: false,
+                checked: false
+              },
+              {
+                id: "river_subbasin",
+                name: "Суббасейни річок",
+                hidden: false,
+                checked: false
+              },
+              {
+                id: "manage_parcel",
+                name: "Межі водогосподарств",
                 hidden: false,
                 checked: false
               },

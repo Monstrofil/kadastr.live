@@ -5,22 +5,22 @@
   "sources": {
     "cadastr": {
       "type": "vector",
-      "url": "https://kadastr.live/tiles/capabilities/kadastr.json?version=2023-03-24",
+      "url": "https://cdn.kadastr.live/tiles/capabilities/kadastr.json",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
     "dzk_pzf": {
       "type": "vector",
-      "url": "https://kadastr.live/tiles/capabilities/dzk_pzf.json?version=2023-03-24",
+      "url": "https://cdn.kadastr.live/tiles/capabilities/dzk_pzf.json",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
     "dzk_atu": {
       "type": "vector",
-      "url": "https://kadastr.live/tiles/capabilities/dzk_atu.json?version=2023-03-24",
+      "url": "https://cdn.kadastr.live/tiles/capabilities/dzk_atu.json",
       "attribution": "DZK"
     },
     "dzk_index_map": {
       "type": "vector",
-      "url": "https://kadastr.live/tiles/capabilities/dzk_index_map.json?version=2023-03-24",
+      "url": "https://cdn.kadastr.live/tiles/capabilities/dzk_index_map.json",
       "attribution": "<a target=\"_blank\" href=\"https://github.com/Monstrofil/kadastr.live/\"><img style=\"vertical-align: middle;\" src=\"/static/GitHub_Logo.png\"></a>"
     },
     "raster-tiles": {
@@ -46,7 +46,7 @@
     "orto-tiles": {
       "type": "raster",
       "tiles": [
-        "https://data.gki.com.ua/api-user/rtile/orto10/ua/{z}/{x}/{y}.png"
+        "https://cdn.kadastr.live/proxy/orto10/{z}/{x}/{y}.png"
       ],
       "tileSize": 256,
       "attribution": "DZK",
@@ -55,7 +55,7 @@
     "topo-tiles": {
       "type": "raster",
       "tiles": [
-        "https://data.gki.com.ua/api-user/rtile/topo100/ua/{z}/{x}/{y}.png"
+        "https://cdn.kadastr.live/proxy/topo100/{z}/{x}/{y}.png"
       ],
       "tileSize": 256,
       "attribution": "ДНІГК",
@@ -76,7 +76,7 @@
     },
     "dzk_water_map": {
       "type": "vector",
-      "url": "https://kadastr.live/tiles/capabilities/dzk_water_map.json"
+      "url": "https://cdn.kadastr.live/tiles/capabilities/dzk_water_map.json"
     }
   },
   "glyphs": "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
@@ -104,6 +104,89 @@
       "minzoom": 0,
       "maxzoom": 22,
       "layout": {"visibility": "none"}
+    },
+    {
+      "id": "river_basin",
+      "type": "fill",
+      "source": "dzk_water_map",
+      "source-layer": "nsdi_river_basin",
+      "paint": {
+        "fill-color": {
+          "property": "square",
+          "type": "categorical",
+          "stops": [
+            [
+              {"zoom": 1, "value": "64410"},
+              "rgba(24, 78, 119, 0.5)"
+            ],
+            [
+              {
+                "zoom": 1,
+                "value": "296317"
+              },
+              "rgba(2, 62, 138, 0.5)"
+            ],
+            [
+              {"zoom": 1, "value": "12892"},
+              "rgba(0, 119, 182, 0.5)"
+            ],
+            [
+              {"zoom": 1, "value": "30626"},
+              "rgba(0, 150, 199, 0.5)"
+            ],
+            [
+              {"zoom": 1, "value": "27218"},
+              "rgba(4, 102, 200, 0.5)"
+            ],
+            [
+              {"zoom": 1, "value": "53961"},
+              "rgba(78, 168, 222, 0.5)"
+            ],
+            [
+              {"zoom": 1, "value": "27179"},
+              "rgba(94, 96, 206, 0.5)"
+            ],
+            [
+              {"zoom": 1, "value": "36866"},
+              "rgba(105, 48, 195, 0.5)"
+            ],
+            [
+              {"zoom": 1, "value": "55273"},
+              "rgba(116, 0, 184, 0.5)"
+            ]
+          ]
+        },
+        "fill-outline-color": "rgba(253, 255, 0, 1)",
+        "fill-opacity": 1,
+        "fill-antialias": true
+      },
+      "layout": {"visibility": "none"}
+    },
+    {
+      "id": "river_subbasin",
+      "type": "fill",
+      "source": "dzk_water_map",
+      "source-layer": "nsdi_river_subbasin",
+      "paint": {
+        "fill-color": "rgba(0, 91, 214, 0.5)",
+        "fill-outline-color": "rgba(255, 171, 0, 1)",
+        "fill-opacity": 1,
+        "fill-antialias": true
+      },
+      "layout": {"visibility": "none"}
+    },
+    {
+      "id": "manage_parcel",
+      "type": "fill",
+      "source": "dzk_water_map",
+      "paint": {
+        "fill-color": "rgba(0, 33, 181, 0.5)",
+        "fill-outline-color": "rgba(0, 255, 174, 1)",
+        "fill-opacity": 1,
+        "fill-antialias": true
+      },
+      "layout": {"visibility": "none"},
+      "source-layer": "nsdi_manage_parcel"
     },
     {
       "id": "topo-tiles",
@@ -241,6 +324,17 @@
       }
     },
     {
+      "id": "nsdi_sm_merega",
+      "type": "fill",
+      "source": "dzk_water_map",
+      "source-layer": "nsdi_sm_merega",
+      "paint": {
+        "fill-color": "rgba(80, 200, 120, 0.75)"
+      },
+      "minzoom": 0,
+      "layout": {"visibility": "none"}
+    },
+    {
       "id": "dzk__atu_rayon",
       "type": "line",
       "source": "dzk_atu",
@@ -299,7 +393,7 @@
       "type": "fill",
       "source": "dzk_atu",
       "source-layer": "atu_terhromad_data",
-      "layout": {"visibility": "visible"},
+      "layout": {"visibility": "none"},
       "paint": {
         "fill-color": "rgba(92, 30, 0, 0)"
       }
@@ -363,7 +457,7 @@
       "source": "dzk_water_map",
       "source-layer": "river_line",
       "filter": ["all", ["<", "length", 50]],
-      "layout": {"visibility": "visible"},
+      "layout": {"visibility": "none"},
       "paint": {
         "line-color": "rgba(45, 79, 255, 1)",
         "line-width": {"stops": [[5, 0.5], [12, 2]]},
@@ -376,7 +470,7 @@
       "source": "dzk_water_map",
       "source-layer": "river_line",
       "filter": ["all", [">=", "length", 50]],
-      "layout": {"visibility": "visible"},
+      "layout": {"visibility": "none"},
       "paint": {
         "line-color": "rgba(45, 79, 255, 1)",
         "line-width": {"stops": [[5, 1], [12, 4]]},
@@ -389,7 +483,7 @@
       "source": "dzk_water_map",
       "source-layer": "river_line",
       "filter": ["all", [">=", "length", 100]],
-      "layout": {"visibility": "visible"},
+      "layout": {"visibility": "none"},
       "paint": {
         "line-color": "rgba(45, 79, 255, 1)",
         "line-width": {"stops": [[5, 2], [12, 6]]},

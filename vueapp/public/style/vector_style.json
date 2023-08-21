@@ -40,9 +40,7 @@
     },
     "orto-tiles": {
       "type": "raster",
-      "tiles": [
-        "https://tiles.kadastr.live/geoserver/kadastr/wms?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=tiffs"
-      ],
+      "tiles": ["/map/rtile/carto_2240035321813140995/ua/{z}/{x}/{y}.png"],
       "tileSize": 256,
       "attribution": "DZK",
       "maxzoom": 19
@@ -72,29 +70,13 @@
       "layout": {"visibility": "visible"}
     },
     {
-      "id": "orto-ersi",
-      "type": "raster",
-      "source": "arcgis-world-imagery-ZYX",
-      "minzoom": 0,
-      "maxzoom": 22,
-      "layout": {"visibility": "none"}
-    },
-    {
-      "id": "orto-tiles",
-      "type": "raster",
-      "source": "orto-tiles",
-      "minzoom": 0,
-      "maxzoom": 22,
-      "layout": {"visibility": "none"}
-    },
-    {
       "id": "dzk__index_map_lines",
       "type": "line",
       "source": "dzk_index_map",
       "source-layer": "index_data",
-      "minzoom": 0,
+      "minzoom": 10,
       "layout": {
-        "visibility": "none",
+        "visibility": "visible",
         "line-cap": "butt",
         "line-join": "bevel",
         "line-round-limit": 2
@@ -111,8 +93,24 @@
       "type": "fill",
       "source": "dzk_index_map",
       "source-layer": "index_data",
-      "layout": {"visibility": "none"},
+      "layout": {"visibility": "visible"},
       "paint": {"fill-color": "rgba(0, 193, 255, 1)", "fill-opacity": 0}
+    },
+    {
+      "id": "orto-ersi",
+      "type": "raster",
+      "source": "arcgis-world-imagery-ZYX",
+      "minzoom": 0,
+      "maxzoom": 22,
+      "layout": {"visibility": "none"}
+    },
+    {
+      "id": "orto-tiles",
+      "type": "raster",
+      "source": "orto-tiles",
+      "minzoom": 0,
+      "maxzoom": 22,
+      "layout": {"visibility": "none"}
     },
     {
       "id": "dzk",
@@ -121,6 +119,87 @@
       "minzoom": 0,
       "maxzoom": 22,
       "layout": {"visibility": "none"}
+    },
+    {
+      "id": "land_polygones",
+      "type": "fill",
+      "source": "cadastr",
+      "source-layer": "land_polygons",
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "fill-opacity": [
+          "case",
+          ["boolean", ["feature-state", "hover"], false],
+          ["literal", 0.85],
+          ["literal", 0.5]
+        ],
+        "fill-color": [
+          "case",
+          ["boolean", ["==", ["get", "address"], null], false],
+          "rgba(41, 162, 200, 1)",
+          "rgba(41, 200, 162, 1)"
+        ],
+        "fill-outline-color": [
+          "case",
+          ["boolean", ["==", ["get", "address"], null], false],
+          "rgba(0, 0, 0, 0.6)",
+          "rgba(0, 0, 0, 0.6)"
+        ]
+      }
+    },
+    {
+      "id": "landuse_count_points",
+      "type": "symbol",
+      "source": "cadastr",
+      "source-layer": "centroids",
+      "maxzoom": 7,
+      "layout": {
+        "text-field": "{parcels}",
+        "text-font": ["Open Sans Bold"],
+        "text-ignore-placement": false,
+        "text-allow-overlap": false,
+        "text-anchor": "center",
+        "text-justify": "center",
+        "text-letter-spacing": 0,
+        "text-keep-upright": false,
+        "text-transform": "none",
+        "text-optional": false,
+        "text-pitch-alignment": "auto",
+        "text-size": {"stops": [[6, 18], [7, 21]]}
+      },
+      "paint": {
+        "text-color": "rgba(0, 0, 0, 1)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 2
+      }
+    },
+    {
+      "id": "landuse_count_background",
+      "type": "fill",
+      "source": "cadastr",
+      "source-layer": "polygons",
+      "maxzoom": 8,
+      "paint": {
+        "fill-color": {
+          "stops": [
+            [3, "rgba(255, 255, 255, 0.5)"],
+            [5, "rgba(255, 255, 255, 0.3)"],
+            [8, "rgba(0, 0, 0, 0)"]
+          ]
+        }
+      }
+    },
+    {
+      "id": "dzk__pzf",
+      "type": "fill",
+      "source": "dzk_pzf",
+      "source-layer": "pzf_data",
+      "layout": {"visibility": "none"},
+      "paint": {
+        "fill-color": "rgba(30, 92, 0, 0.5)",
+        "fill-antialias": true,
+        "fill-outline-color": "rgba(32, 32, 32, 0.5)"
+      }
     }
   ],
   "id": "positron"

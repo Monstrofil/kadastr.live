@@ -10,6 +10,10 @@
         ref="filterToggle"
     />
 
+
+  <WayBackMachine ref="waybackButton"
+                  @revisionChanged="onRevisionChange"/>
+
     <WrapperOffcanvas>
       <template v-slot:title>Фільтр</template>
       <template v-slot:default>
@@ -33,15 +37,20 @@
 <script>
 import maplibregl from "maplibre-gl";
 import { ref } from "vue";
-import SearchBox from "@/components/SearchBox";
+import SearchBox from "@/components/map/controls/SearchBox";
 import ParcelInfo from "@/components/map/controls/previewTooltip/ParcelInfo";
 import NatureInfo from "@/components/map/controls/previewTooltip/NatureInfo";
 import IndexInfo from "@/components/map/controls/previewTooltip/IndexInfo";
 import RiverInfo from "@/components/map/controls/previewTooltip/RiverInfo";
 import WrapperOffcanvas from "@/components/WrapperOffcanvas";
-import FilterToggleButton from "@/components/FilterToggleButton";
+import FilterToggleButton from "@/components/map/controls/FilterToggleButton";
 import TerhromadInfo from "@/components/TerhromadInfo";
 import MapFilter from "@/components/map/controls/MapFilter";
+import WayBackMachine from "@/components/map/controls/WayBackMachine";
+import RiverBasinInfo from "@/components/map/controls/previewTooltip/RiverBasinInfo.vue";
+import NatureSmaragdInfo from "@/components/map/controls/previewTooltip/NatureSmaragdInfo.vue";
+import RiverSubBasinInfo from "@/components/map/controls/previewTooltip/RiverSubBasinInfo";
+import ManageParcelInfo from "@/components/map/controls/previewTooltip/ManageParcelInfo";
 
 export default {
   name: 'MapComponent',
@@ -49,6 +58,7 @@ export default {
     MapFilter,
     TerhromadInfo,
     FilterToggleButton,
+    WayBackMachine,
     WrapperOffcanvas,
     ParcelInfo,
     SearchBox
@@ -75,8 +85,9 @@ export default {
     const searchBox = ref(null);
     const filterToggle = ref(null);
     const pzfInfo = ref(null);
+    const waybackButton = ref(null);
 
-    return { searchBox, pzfInfo, filterToggle };
+    return { searchBox, pzfInfo, filterToggle, waybackButton };
   },
   data() {
     return {
@@ -88,11 +99,16 @@ export default {
       touchInsideParcel: null,
       selectedItem: null,
       selectedATU: null,
+      requestedParcelsRevision: null,
       renderer: {
         'land_polygons': ParcelInfo,
         'pzf_data': NatureInfo,
+        'nsdi_sm_merega': NatureSmaragdInfo,
         'index_data': IndexInfo,
         'river_line': RiverInfo,
+        'nsdi_river_basin': RiverBasinInfo,
+        'nsdi_river_subbasin': RiverSubBasinInfo,
+        'nsdi_manage_parcel': ManageParcelInfo,
         null: NatureInfo,
       },
       map: null
@@ -115,6 +131,17 @@ export default {
         zoom: 19,
         essential: true
       })
+    },
+    onRevisionChange(e) {
+      this.requestedParcelsRevision = e;
+      // Remove the tiles for a particular source
+      this.map.style.sourceCaches['cadastr'].clearTiles()
+
+      // Load the new tiles for the current viewport (map.transform -> viewport)
+      this.map.style.sourceCaches['cadastr'].update(this.map.transform)
+
+      // Force a repaint, so that the map will be repainted without you having to touch the map
+      this.map.triggerRepaint()
     },
     highlightParcels(e) {
       let features = this.map.queryRenderedFeatures(e.point);
@@ -188,7 +215,29 @@ export default {
       style: this.mapStyle,
       center: this.location,
       zoom: 5,
-      hash: true
+      hash: true,
+        transformRequest: (url, resourceType) => {
+            let parsedUrl = new URL(url, location);
+
+            if (resourceType === 'Source' || resourceType === 'Style') {
+                parsedUrl.searchParams.append('version', process.build.version);
+            }
+            // TODO: wayback machine props here
+            // TODO: remove hardcoded domain name here
+            if (
+                this.requestedParcelsRevision !== null &&
+                resourceType === 'Tile' &&
+                url.startsWith('https://cdn.kadastr.live/tiles/maps/kadastr')
+            ) {
+                parsedUrl.hostname = 'cdn.kadastr.live'
+                parsedUrl.href = parsedUrl.href.replace('tiles/maps/kadastr', 'wayback_tiles/maps/kadastr');
+                parsedUrl.searchParams.append('revision', this.requestedParcelsRevision)
+            }
+
+            return {
+                url: parsedUrl.toString()
+            }
+        }
     });
 
     this.map.on('load', () => {
@@ -208,6 +257,7 @@ export default {
 
       this.map.addControl(this.searchBox, "top-left");
       this.map.addControl(this.filterToggle, "top-right");
+      this.map.addControl(this.waybackButton, "top-right");
 
       this.map.addControl(new maplibregl.NavigationControl(), "bottom-right");
 
@@ -256,6 +306,10 @@ export default {
       this.map.on('mouseleave', 'water_lines_middle_rivers', mouseleave_layer.bind(this));
       this.map.on('mouseleave', 'water_lines_large', mouseleave_layer.bind(this));
       this.map.on('mouseleave', 'water_lines_text', mouseleave_layer.bind(this));
+      this.map.on('mouseleave', 'river_basin', mouseleave_layer.bind(this));
+      this.map.on('mouseleave', 'nsdi_sm_merega', mouseleave_layer.bind(this));
+      this.map.on('mouseleave', 'river_subbasin', mouseleave_layer.bind(this));
+      this.map.on('mouseleave', 'manage_parcel', mouseleave_layer.bind(this));
 
       function touchend_layer(e) {
         this.touchInsideParcel = true;
@@ -271,6 +325,10 @@ export default {
       this.map.on('touchend', 'water_lines_middle_rivers', touchend_layer.bind(this))
       this.map.on('touchend', 'water_lines_large', touchend_layer.bind(this))
       this.map.on('touchend', 'water_lines_text', touchend_layer.bind(this))
+      this.map.on('touchend', 'river_basin', touchend_layer.bind(this))
+      this.map.on('touchend', 'nsdi_sm_merega', touchend_layer.bind(this))
+      this.map.on('touchend', 'river_subbasin', touchend_layer.bind(this))
+      this.map.on('touchend', 'manage_parcel', touchend_layer.bind(this))
 
       function touchend() {
         if(this.touchInsideParcel){
@@ -297,6 +355,10 @@ export default {
       this.map.on('mousemove', 'water_lines_middle_rivers', mousemove.bind(this));
       this.map.on('mousemove', 'water_lines_large', mousemove.bind(this));
       this.map.on('mousemove', 'water_lines_text', mousemove.bind(this));
+      this.map.on('mousemove', 'river_basin', mousemove.bind(this));
+      this.map.on('mousemove', 'nsdi_sm_merega', mousemove.bind(this));
+      this.map.on('mousemove', 'river_subbasin', mousemove.bind(this));
+      this.map.on('mousemove', 'manage_parcel', mousemove.bind(this));
     });
   }
 }

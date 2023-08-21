@@ -4,16 +4,12 @@
       <i class="fa fa-filter"></i>
       <span class="fa-filter-caption">&nbsp;Керування</span>
     </a>
-
-  <WayBackMachine @revisionChanged="$emit('revisionChanged', $event)"/>
 </div>
 </template>
 
 <script>
-import WayBackMachine from "@/components/map/controls/WayBackMachine";
 export default {
   name: "FilterToggleButton",
-  components: {WayBackMachine},
   methods: {
     onAdd() {
       return this.$refs.element

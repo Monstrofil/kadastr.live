@@ -8,7 +8,7 @@ import '@maplibre/maplibre-gl-compare/dist/maplibre-gl-compare.css';
 import axios from 'axios';
 import './assets/styles.scss'
 import DynamicModalWindows from "@/components/DynamicModalWindows";
-import AboutPageComponent from "@/components/AboutPageComponent";
+import AboutPageComponent from "@/components/about/AboutPageComponent";
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 import BounceLoader from 'vue-spinner/src/BounceLoader.vue';
 
